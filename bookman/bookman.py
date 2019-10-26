@@ -29,6 +29,9 @@ eventually i'd have to add a proper cli to it.
 moreover, i feel like this would be a good template for my bookmarks and mellori
 i wrote bookpoint but i never used it, never even got around to organizing those darn favorites' """
 
+import requests
+import re
+
 class Book:
     """
     Abstraction for a book
@@ -40,6 +43,12 @@ class Book:
     note = ''
     isbn = ''
     alises = []
+
+    @classmethod
+    def _from_json(cls, json):
+        """Intermidiary function that receives the API json and creates the book object.
+        Allows for mock testing"""
+        pass
 
     def to_json(self):
         """Serialize Book to a json"""
