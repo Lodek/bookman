@@ -36,18 +36,18 @@ class TestOpenLibApi(TestCase):
     def tearDown(self):
         pass
 
-    def test_api_change(self):
+    def test_get_json(self):
         """Asserts the opebooks API hasn't changed and still sends the samestuff"""
         with open('test-json.json') as f:
             json_stored = json.load(f)
-        j = self.api.get_json(self.isbn)
+        j = self.api.get_json([self.isbn])
         self.assertEqual(j, json_stored)
     
     def test_get_book(self):
         """Test the book is built correctly fetched from the API"""
         book = self.api.get_book(self.isbn)
         authors = ['David Money Harris']
-        isbn = self.isbn
+        isbn = '9780123944245'
         publish_date = '2013'
         title = 'Digital design and computer architecture'
         self.assertEqual(book.title, title)
