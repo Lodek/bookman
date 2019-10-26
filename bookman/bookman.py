@@ -109,7 +109,8 @@ class GoogleBooksApi(BookApi):
     def get_json(self, isbns, processes=1):
         uris = [self.rest_html.format(isbn.replace('-', '')) for isbn in isbns]
         responses = [requests.get(uri) for uri in uris]
-        jsons = [(r.json())['items'][0]['volumeInfo'] for r in responses]
+        jsons = [r.json() for r in responses]
+        jsons = [json['items'][0]['volumeInfo'] for json in jsons]
         return jsons
 
     def _construct_book(self, data):
@@ -155,7 +156,9 @@ class Lib:
         self.config.read(config_path)
         self.books_dir = self.config['bookman']['books_dir']
         self.books_data = self.config['bookman']['books_data']
-        self.api = GoogleBooksApi(self.config['bookman']['api_key'])
+        #self.api = GoogleBooksApi(self.config['bookman']['api_key'])
+        self.api = GoogleBooksApi()
+        self.books = []
     
     def find_books(self, attr, text):
         """Iterate over list of books, search for the given text in the given attr, return list of matches"""
