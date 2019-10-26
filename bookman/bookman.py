@@ -61,28 +61,41 @@ class OpenLibApi:
 
     request_url = 'https://openlibrary.org/api/books?&format=json&jscmd=data&bibkeys={}'
 
-    def get_json(self, isbn):
-        """Fetch book json from the api, return json"""
-        url = self.request_url.format('ISBN:'+isbn)
+    def get_json(self, isbns):
+        """Construct the GET url for the openlib api. The url contains all isbns
+        in the given list. Expect isbns to be a list. Return request json"""
+        post_isbns = ['ISBN:'+isbn for isbn in isbns]
+        url = self.request_url.format(','.join(post_isbns))
         r = requests.get(url)
-        return r.json()
+        if r.status_code != 200:
+            excep_msg = f'API Response error: response={r}, isbns={isbns}, url={url}'
+            logger.info(excep_msg)
+            raise RunTimeError(excep_msg)
+        else:
+            return r.json()
 
+    def get_books(self, isbns):
+        """Construct Book objects from a list of isbns, return list of books"""
+        json = self.get_jsons(isbns)
+        books = [self._construct_book(data) for data in json.values]
+        return books
+            
     def get_book(self, isbn):
-        """Return Book Object from the fetched json"""
-        json = self.get_json(isbn)
-        key = list(json.keys())[0]
-        json = json[key]
-        authors = [author['name'] for author in json['authors']]
-        date = json['publish_date']
-        title = json['title']
-        publish_date = json['publish_date']
+        """Run request to fetch data for ISBN, return book object"""
+        json = self.get_json([isbn])
+        data = list(json.values())[0]
+        return self._construct_book(data)
+            
+    def _construct_book(self, data):
+        """Return Book Object from the fetched json data"""
+        isbn = data['identifiers']['isbn_13'][0]
+        authors = [author['name'] for author in data['authors']]
+        date = data['publish_date']
+        title = data['title']
+        publish_date = data['publish_date']
         book = Book(authors=authors, title=title, isbn=isbn, publish_date=publish_date)
         return book
 
-    def fetch_books(isbns):
-        """Fetch book json from the api, return list of jsons with book info"""
-        pass
-        
 
 class Lib:
     
