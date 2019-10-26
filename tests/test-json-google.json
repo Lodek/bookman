@@ -1,0 +1,82 @@
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "-DG18Nf7jLcC",
+   "etag": "I+nC5Jdk0hs",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/-DG18Nf7jLcC",
+   "volumeInfo": {
+    "title": "Digital Design and Computer Architecture",
+    "authors": [
+     "David Money Harris",
+     "Sarah L. Harris"
+    ],
+    "publisher": "Elsevier",
+    "publishedDate": "2013",
+    "description": "Digital Design and Computer Architecture Second Edition David Money Harris and Sarah L. Harris \"Harris and Harris have taken the popular pedagogy from Computer Organization and Design down to the next level of refinement, showing in detail how to build a MIPS microprocessor in both Verilog and VHDL. Given the exciting opportunity that students have to run large digital designs on modern FGPAs, the approach the authors take in this book is both informative and enlightening.\" -David A. Patterson, University of California at Berkeley, Co-author of Computer Organization and Design Digital Design and Computer Architecture takes a unique and modern approach to digital design. Beginning with digital logic gates and progressing to the design of combinational and sequential circuits, Harris and Harris use these fundamental building blocks as the basis for what follows: the design of an actual MIPS processor. SystemVerilog and VHDL are integrated throughout the text in examples illustrating the methods and techniques for CAD-based circuit design. By the end of this book, readers will be able to build their own microprocessor and will have a top-to-bottom understanding of how it works. Harris and Harris have combined an engaging and humorous writing style with an updated and hands-on approach to digital design. This second edition has been updated with new content on I/O systems in the context of general purpose processors found in a PC as well as microcontrollers found almost everywhere. The new edition provides practical examples of how to interface with peripherals using RS232, SPI, motor control, interrupts, wireless, and analog-to-digital conversion. High-level descriptions of I/O interfaces found in PCs include USB, SDRAM, WiFi, PCI Express, and others. In addition to expanded and updated material throughout, SystemVerilog is now featured in the programming and code examples (replacing Verilog), alongside VHDL. This new edition also provides additional exercises and a new appendix on C programming to strengthen the connection between programming and processor architecture. SECOND Edition Features Covers the fundamentals of digital logic design and reinforces logic concepts through the design of a MIPS microprocessor. Features side-by-side examples of the two most prominent Hardware Description Languages (HDLs)-SystemVerilog and VHDL-which illustrate and compare the ways each can be used in the design of digital systems. Includes examples throughout the text that enhance the reader's understanding and retention of key concepts and techniques. Companion Web site includes links to CAD tools for FPGA design from Altera and Mentor Graphics, lecture slides, laboratory projects, and solutions to exercises. David Money Harris Professor of Engineering, Harvey Mudd College Sarah L. Harris Associate Professor of Engineering, Harvey Mudd College Updated based on instructor feedback with more exercises and new examples of parallel and advanced architectures, practical I/O applications, embedded systems, and heterogeneous computing Presents digital system design examples in both VHDL and SystemVerilog (updated for the second edition from Verilog), shown side-by-side to compare and contrast their strengths Includes a new chapter on C programming to provide necessary prerequisites and strengthen the connection between programming and processor architecture Companion Web site includes links to Xilinx CAD tools for FPGA design, lecture slides, laboratory projects, and solutions to exercises. Instructors can also register at textbooks.elsevier.com for access to: Solutions to all exercises (PDF) Lab materials with solutions HDL for textbook examples and ex",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780123944245"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0123944244"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 690,
+    "printType": "BOOK",
+    "categories": [
+     "Computers"
+    ],
+    "averageRating": 5.0,
+    "ratingsCount": 1,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=-DG18Nf7jLcC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=-DG18Nf7jLcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com.br/books?id=-DG18Nf7jLcC&printsec=frontcover&dq=isbn:9780123944245&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com.br/books?id=-DG18Nf7jLcC&dq=isbn:9780123944245&hl=&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/Digital_Design_and_Computer_Architecture.html?hl=&id=-DG18Nf7jLcC"
+   },
+   "saleInfo": {
+    "country": "BR",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "BR",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=-DG18Nf7jLcC&hl=&printsec=frontcover&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "By the end of this book, readers will be able to build their own microprocessor and will have a top-to-bottom understanding of how it works."
+   }
+  }
+ ]
+}
