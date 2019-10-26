@@ -42,7 +42,7 @@ class Book:
         self.isbn = isbn
         self.publish_date = publish_date
         self.tags = []
-        self.note = ''
+        self.notes = ''
         self.aliases = []
         for attr, value in kwargs.items():
             try:
@@ -53,7 +53,7 @@ class Book:
 
     def _asdict(self):
         """Serialize self to a dict"""
-        attrs = 'authors title isbn publish_date tags note aliases'.split()
+        attrs = 'authors title isbn publish_date tags notes aliases'.split()
         return {attr : getattr(self, attr) for attr in attrs}
 
     def to_json(self):
