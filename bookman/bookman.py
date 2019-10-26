@@ -53,6 +53,10 @@ class Book:
         """Check whether exp is in the attr attribute of self."""
         pass
 
+    def __repr__(self):
+        s = '{}: title={}; authors={}; isbn={};'
+        return s.format(self.__class__, self.title, self.authors, self.isbn)
+        
 
 class OpenLibApi:
     """
@@ -76,8 +80,8 @@ class OpenLibApi:
 
     def get_books(self, isbns):
         """Construct Book objects from a list of isbns, return list of books"""
-        json = self.get_jsons(isbns)
-        books = [self._construct_book(data) for data in json.values]
+        json = self.get_json(isbns)
+        books = [self._construct_book(data) for data in json.values()]
         return books
             
     def get_book(self, isbn):

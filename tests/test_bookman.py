@@ -54,6 +54,13 @@ class TestOpenLibApi(TestCase):
         self.assertEqual(book.authors, authors)
         self.assertEqual(book.isbn, isbn)
         self.assertEqual(book.publish_date, publish_date)
+
+    def test_get_books(self):
+        isbns = ['9780123944245', '9780756404741']
+        books = self.api.get_books(isbns)
+        self.assertEqual(len(books), 2)
+        print(books)
+
         
 
 if __name__ == '__main__':
