@@ -28,21 +28,32 @@ class TestBook(TestCase):
 class TestOpenLibApi(TestCase):
     """
     """
+
     def setUp(self):
         self.api = OpenLibApi()
+        self.isbn = '978-0123944245'
 
     def tearDown(self):
         pass
 
     def test_api_change(self):
         """Asserts the opebooks API hasn't changed and still sends the samestuff"""
-        isbn = '978-0123944245'
         with open('test-json.json') as f:
             json_stored = json.load(f)
-        j = self.api.fetch_book(isbn)
+        j = self.api.get_json(self.isbn)
         self.assertEqual(j, json_stored)
     
-
+    def test_get_book(self):
+        """Test the book is built correctly fetched from the API"""
+        book = self.api.get_book(self.isbn)
+        authors = ['David Money Harris']
+        isbn = self.isbn
+        publish_date = '2013'
+        title = 'Digital design and computer architecture'
+        self.assertEqual(book.title, title)
+        self.assertEqual(book.authors, authors)
+        self.assertEqual(book.isbn, isbn)
+        self.assertEqual(book.publish_date, publish_date)
         
 
 if __name__ == '__main__':

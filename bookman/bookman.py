@@ -36,13 +36,14 @@ class Book:
     """
     Abstraction for a book
     """
-    authors = []
-    published_year = 0
-    title = ''
-    tags = []
-    note = ''
-    isbn = ''
-    aliases = []
+    def __init__(self, authors, title, isbn, publish_date):
+        self.authors = authors
+        self.title = title
+        self.isbn = isbn
+        self.publish_date = publish_date
+        self.tags = []
+        self.note = ''
+        self.aliases = []
 
     def to_json(self):
         """Serialize Book to a json"""
@@ -60,11 +61,23 @@ class OpenLibApi:
 
     request_url = 'https://openlibrary.org/api/books?&format=json&jscmd=data&bibkeys={}'
 
-    def fetch_book(self, isbn):
+    def get_json(self, isbn):
         """Fetch book json from the api, return json"""
         url = self.request_url.format('ISBN:'+isbn)
         r = requests.get(url)
         return r.json()
+
+    def get_book(self, isbn):
+        """Return Book Object from the fetched json"""
+        json = self.get_json(isbn)
+        key = list(json.keys())[0]
+        json = json[key]
+        authors = [author['name'] for author in json['authors']]
+        date = json['publish_date']
+        title = json['title']
+        publish_date = json['publish_date']
+        book = Book(authors=authors, title=title, isbn=isbn, publish_date=publish_date)
+        return book
 
     def fetch_books(isbns):
         """Fetch book json from the api, return list of jsons with book info"""
