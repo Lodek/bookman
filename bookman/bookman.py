@@ -30,13 +30,13 @@ moreover, i feel like this would be a good template for my bookmarks and mellori
 i wrote bookpoint but i never used it, never even got around to organizing those darn favorites' """
 
 import requests
-import re
+import json, re
 
 class Book:
     """
     Abstraction for a book
     """
-    def __init__(self, authors, title, isbn, publish_date):
+    def __init__(self, authors, title, isbn, publish_date, **kwargs):
         self.authors = authors
         self.title = title
         self.isbn = isbn
@@ -44,10 +44,21 @@ class Book:
         self.tags = []
         self.note = ''
         self.aliases = []
+        for attr, value in kwargs.items():
+            try:
+                getattr(self, attr)
+                setattr(self, attr, value)
+            except AttributeError:
+                raise AttributeError(f'Invalid attr {attr}.')
+
+    def _asdict(self):
+        """Serialize self to a dict"""
+        attrs = 'authors title isbn publish_date tags note aliases'.split()
+        return {attr : getattr(self, attr) for attr in attrs}
 
     def to_json(self):
         """Serialize Book to a json"""
-        pass
+        return json.dumps(self._asdict())
 
     def search(self, attr, exp, re=False):
         """Check whether exp is in the attr attribute of self."""

@@ -10,7 +10,7 @@ sys.path.insert(0, str(p))
 
 from unittest import TestCase, main
 import requests
-from bookman import OpenLibApi
+from bookman import OpenLibApi, Book
 import json
 
 class TestBook(TestCase):
@@ -19,10 +19,23 @@ class TestBook(TestCase):
     """
 
     def setUp(self):
-        pass
+        self.book_d = dict(authors='a1 a2'.split(), title='title', publish_date=2010,
+                      isbn='000000')
 
     def tearDown(self):
         pass
+
+    def test_init(self):
+        """Assert init method works accordingly"""
+        book = Book(**self.book_d)
+        self.assertEqual(book.authors, 'a1 a2'.split())
+        self.assertEqual(book.title, 'title')
+        self.assertEqual(book.publish_date, 2010)
+        
+        with self.assertRaises(AttributeError):
+            self.book_d['invalid_attr'] = 'invalid'
+            book = Book(**self.book_d)
+
 
 
 class TestOpenLibApi(TestCase):
@@ -59,7 +72,6 @@ class TestOpenLibApi(TestCase):
         isbns = ['9780123944245', '9780756404741']
         books = self.api.get_books(isbns)
         self.assertEqual(len(books), 2)
-        print(books)
 
         
 
