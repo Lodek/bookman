@@ -42,13 +42,7 @@ class Book:
     tags = []
     note = ''
     isbn = ''
-    alises = []
-
-    @classmethod
-    def _from_json(cls, json):
-        """Intermidiary function that receives the API json and creates the book object.
-        Allows for mock testing"""
-        pass
+    aliases = []
 
     def to_json(self):
         """Serialize Book to a json"""
@@ -58,10 +52,24 @@ class Book:
         """Check whether exp is in the attr attribute of self."""
         pass
 
-    @classmethod
-    def from_api(cls, isbn):
-        """Create Book object from a json fetched from an api"""
+
+class OpenLibApi:
+    """
+    API class, interfaces with the openlibrary API.
+    """
+
+    request_url = 'https://openlibrary.org/api/books?&format=json&jscmd=data&bibkeys={}'
+
+    def fetch_book(self, isbn):
+        """Fetch book json from the api, return json"""
+        url = self.request_url.format('ISBN:'+isbn)
+        r = requests.get(url)
+        return r.json()
+
+    def fetch_books(isbns):
+        """Fetch book json from the api, return list of jsons with book info"""
         pass
+        
 
 class Lib:
     
