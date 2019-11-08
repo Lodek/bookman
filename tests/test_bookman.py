@@ -2,15 +2,11 @@
 """
 
 """
-from pathlib import Path
-p = Path(__file__).parent
-p = (p.parent.absolute().parent) / 'bookman'
-import sys
-sys.path.insert(0, str(p))
-
 from unittest import TestCase, main
 import requests
-from bookman import GoogleBooksApi, Book
+from bookman.bookman import Book
+from bookman.api import GoogleBooksApi
+from bookman.cli import Interface
 import json
 
 class TestBook(TestCase):
@@ -59,7 +55,6 @@ class TestBook(TestCase):
         self.assertEqual(book.notes, 'test')
  
             
-
 class OpenLibApi():
     """
     Deprecated test suite
@@ -126,7 +121,6 @@ class TestGoogleBooksApi(TestCase):
         isbns = ['9780123944245', '9780756404741']
         books = self.api.get_books(isbns)
         self.assertEqual(len(books), 2)
-
 
 
 if __name__ == '__main__':
