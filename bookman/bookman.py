@@ -35,7 +35,8 @@ class Interface:
         return config['bookman']
 
     def search(self, top_args):
-        parser = argparse.ArgumentParser()
+        """ """
+        parser = argparse.ArgumentParser(description=self.search.__doc__)
         parser.add_argument('pattern')
         parser.add_argument('-f', '--format', default='isbn')
         args = parser.parse_args(top_args)
@@ -44,7 +45,8 @@ class Interface:
             print(getattr(book, args.format))
 
     def list(self, top_args):
-        parser = argparse.ArgumentParser()
+        """ """
+        parser = argparse.ArgumentParser(description=self.list.__doc__)
         parser.add_argument('-f', '--format', default='isbn')
         args = parser.parse_args(top_args)
         books = self.lib.books
@@ -52,8 +54,10 @@ class Interface:
             print(getattr(book, args.format))
 
     def add(self, top_args):
-        parser = argparse.ArgumentParser()
-        parser.add_argument('isbns')
+        """Receive a list of ISBN values, looks up the information about those books
+        and add the books found to bookman."""
+        parser = argparse.ArgumentParser(description=self.add.__doc__)
+        parser.add_argument('isbns', nargs='+')
         args = parser.parse_args(top_args)
         self.lib.add_books(args.isbns)
         self.lib.save()
