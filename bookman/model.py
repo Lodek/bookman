@@ -49,6 +49,10 @@ class Book:
         s = '{}: title={}; authors={}; isbn={};'
         return s.format(self.__class__, self.title, self.authors, self.isbn)
 
+    def __str__(self):
+        return '\t'.join([self.title, ';'.join(self.authors), self.publish_date,
+                          self.isbn, ','.join(self.tags), ','.join(self.aliases)])
+
 class Lib:
     
     def __init__(self, books_dir, books_data, api_key, api):

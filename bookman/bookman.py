@@ -7,6 +7,9 @@ class Interface:
     """
     Class for cli functions of bookman
     """
+    books_json = ''
+    api_key = ''
+    books_dir = ''
     def parse(self):
         #ignoring top parser flags for now
         top_args = self.top_parser()
@@ -15,12 +18,24 @@ class Interface:
         self.lib.load()
         func = getattr(self, top_args.command)
         func(top_args.args)
+
+    def config_from_env(self):
+        """Load configuration attributes from environment"""
+        self.books_json = sys.environ['BOOKS_JSON'] if 'BOOKS_JSON' in sys.environ else '' 
+        self.api_key = sys.environ['API_KEY'] if 'API_KEY' in sys.environ else ''
+        self.books_dir = sys.environ['BOOKS_DIR'] if 'BOOKS_DIR' in sys.envrion else ''
+        
+    def config_setter(self, attr, value):
+        """Setter for attributes, checks that value evaluates to True then call setattr"""
+        if value:
+            setattr(self, attr, value)
+            
         
     def top_parser(self, args=sys.argv):
         """Top level parser for the command arguments of bookman"""
         args = args[1:]
         parser = argparse.ArgumentParser()
-        parser.add_argument('command', choices='search add list open'.split())
+        parser.add_argument('command', choices='dump search add list open'.split())
         parser.add_argument('args', nargs=argparse.REMAINDER)
         parser.add_argument('-c', '--config', default='~/.bookman.ini', help='bookman config file')
         parser.add_argument('-f', '--books_json', help='bookman json file') 
@@ -39,11 +54,12 @@ class Interface:
         """Search library for books"""
         parser = argparse.ArgumentParser(description=self.search.__doc__)
         parser.add_argument('pattern')
-        parser.add_argument('-f', '--format', default='isbn')
+        parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode, prints only the ISBN')
         args = parser.parse_args(top_args)
         books = self.lib.search(args.pattern)
         for book in books:
-            print(getattr(book, args.format))
+            s = book.isbn if args.quiet else str(book)
+            print(s)
 
     def list(self, top_args):
         """Lists all books in the library"""
@@ -73,6 +89,17 @@ class Interface:
         paths = self.lib.get_paths(books)
         for path in paths:
             subprocess.Popen(['zathura', str(path)], start_new_session=True)
+        
+    def dump(self, top_args):
+        """Write the book identified by the given ISBN to stdout"""
+        parser = argparse.ArgumentParser(description=self.add.__doc__)
+        parser.add_argument('isbn')
+        args = parser.parse_args(top_args)
+        books = self.lib.search(args.pattern)
+        paths = self.lib.get_paths(books)
+        with paths[0].open('rb') as f:
+            sys.stdout.buffer.write(f.read())
+ 
         
 def main():
     interface = Interface()
