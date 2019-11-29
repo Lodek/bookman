@@ -55,9 +55,9 @@ class Book:
 
 class Lib:
     
-    def __init__(self, books_dir, books_data, api_key, api):
+    def __init__(self, books_dir, books_json, api_key, api):
         self.books_dir = Path(books_dir).expanduser().absolute()
-        self.books_data = Path(books_data).expanduser().absolute()
+        self.books_json = Path(books_json).expanduser().absolute()
         self.api_key = api_key
         self.api = api(api_key)
         self.books = []
@@ -80,7 +80,7 @@ class Lib:
 
     def load(self):
         try:
-            with open(self.books_data) as f:
+            with open(self.books_json) as f:
                 books_raw = json.load(f)
                 self.books = [Book(**book) for book in books_raw]
         except FileNotFoundError:
@@ -88,6 +88,6 @@ class Lib:
 
     def save(self):
         books_asdict = [book._asdict() for book in self.books]
-        with open(self.books_data, 'w') as f:
+        with open(self.books_json, 'w') as f:
             json.dump(books_asdict, f, indent=4, sort_keys=True)
 
