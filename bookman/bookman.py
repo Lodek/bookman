@@ -3,18 +3,24 @@ from bookman.api import GoogleBooksApi
 import subprocess, configparser, argparse, sys, os
 from pathlib import Path
 
-class Commands:
+class Command:
     """
     Class for cli functions of bookman
     """
 
     choices = 'dump search add list open'.split()
 
-    @classmethod
-    def route(cls, lib, command):
-        """Router that invokes the correct method"""
+    def __init__(self, lib):
+        self.lib = lib
 
     @classmethod
+    def call(cls, lib, args):
+        """Router that invokes the correct method"""
+        obj = cls(lib)
+        f = getattr(obj, args.command)
+        f(args.args)
+
+    
     def search(self, top_args):
         """Search library for books"""
         parser = argparse.ArgumentParser(description=self.search.__doc__)
@@ -26,7 +32,7 @@ class Commands:
             s = book.isbn if args.quiet else str(book)
             print(s)
 
-    @classmethod
+    
     def list(self, top_args):
         """Lists all books in the library"""
         parser = argparse.ArgumentParser(description=self.list.__doc__)
@@ -36,7 +42,7 @@ class Commands:
         for book in books:
             print(getattr(book, args.format))
 
-    @classmethod
+    
     def add(self, top_args):
         """Receive a list of ISBN values, looks up the information about those books
         and add the books found to bookman."""
@@ -48,7 +54,7 @@ class Commands:
         self.lib.save()
 
 
-    @classmethod
+    
     def open(self, top_args):
         """Searches for books and call xdg-open on matches"""
         parser = argparse.ArgumentParser(description=self.add.__doc__)
@@ -59,7 +65,7 @@ class Commands:
         for path in paths:
             subprocess.Popen(['zathura', str(path)], start_new_session=True)
 
-    @classmethod
+    
     def dump(self, top_args):
         """Write the book identified by the given ISBN to stdout"""
         parser = argparse.ArgumentParser(description=self.add.__doc__)
@@ -77,31 +83,29 @@ class Interface:
     Initial parser for bookman.
     Sequentially source the configuration variables, parses the top lvl args
     and routes the arguments to the appropriate command.
-    
     """
-    #Makes use of metaprogramming and properties to sequentially set configurating
-    #attributes
-
     def __init__(self):
         self.attributes = 'books_json api_key books_dir'.split()
         self.lib_attrs = {attr : '' for attr in self.attributes}
 
-    def do(self):
+    @classmethod
+    def do(cls):
         """Parse command line arguments, initialize and load Lib, route
         command to Command class"""
+        self = cls()
         args = self.parse()
         self.load_ini(args)
-        self.load_env(args)
+        self.load_env()
         self.config_from_args(args)
-        lib = Lib(api=GoogleBooksApi, **self.lib_arguments)
+        lib = Lib(api=GoogleBooksApi, **self.lib_attrs)
         lib.load()
-        Command.route(lib, args)
+        Command.call(lib, args)
 
     def parse(self, args=sys.argv):
         """Parser for the top level arguments."""
         args = args[1:]
         parser = argparse.ArgumentParser()
-        parser.add_argument('command', choices=Commands.choices)
+        parser.add_argument('command', choices=Command.choices)
         parser.add_argument('args', nargs=argparse.REMAINDER)
         parser.add_argument('-c', '--config', default='~/.bookman.ini', help='bookman config file')
         parser.add_argument('-f', '--books_json', help='bookman json file', default='') 
@@ -148,8 +152,7 @@ class Interface:
  
 
 def main():
-    interface = Interface()
-    interface.parse()
+    Interface.do()
 
 if __name__ == '__main__':
     main()

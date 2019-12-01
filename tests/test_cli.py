@@ -52,7 +52,6 @@ class TestInterface(TestCase):
         self.assertEqual(self.i.lib_attrs['books_json'], 'json')
         self.assertEqual(self.i.lib_attrs['api_key'], 'key')
         self.assertEqual(self.i.lib_attrs['books_dir'], 'dir')
-
        
 
     def test_config_from_file(self):
