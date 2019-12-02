@@ -1,127 +1,91 @@
 #!/usr/bin/env python
 """
-
+Test module for the bookman.py module
 """
 from unittest import TestCase, main
-import requests
-from bookman.bookman import Book
-from bookman.api import GoogleBooksApi
-from bookman.cli import Interface
-import json
+from bookman.bookman import Interface
+from os import environ
 
-class TestBook(TestCase):
+class TestInterface(TestCase):
     """
-    Test the Book class
     """
-
     def setUp(self):
-        self.book_d = dict(authors='a1 a2'.split(), title='title', publish_date=2010,
-                      isbn='000000')
-        self.book = Book(**self.book_d)
+        """Patches Interface's parse method with a custom one that alters args
+        so tests can execute correctly"""
+        self.i = Interface()
+        self.i.original_parse = self.i.parse
+        self.i.parse = self.parse_overload
 
     def tearDown(self):
         pass
 
-    def test_init(self):
-        """Assert init method works accordingly"""
-        book = Book(**self.book_d)
-        self.assertEqual(book.authors, 'a1 a2'.split())
-        self.assertEqual(book.title, 'title')
-        self.assertEqual(book.publish_date, 2010)
-        
-        with self.assertRaises(AttributeError):
-            self.book_d['invalid_attr'] = 'invalid'
-            book = Book(**self.book_d)
-
-    def test_serialize(self):
-        """Assert serialize method generates the correct json"""
-        t = dict(notes='', tags=[], aliases=[])
-        t.update(self.book_d) #base dict
-        #since dicts are unordered I can't make a direct comparassion of the
-        #resulting strings cause ordering will be messed up.
-        expected = json.loads(json.dumps(t))
-        target = json.loads(self.book.to_json())
-        self.assertEqual(expected, target)
-
-    def test_unserialize(self):
-        """Test the book is initialized correctly from a json"""
-        j = self.book.to_json()
-        d = json.loads(j)
-        d['notes'] = 'test'
-        book = Book(**d)
-        self.assertEqual(book.authors, 'a1 a2'.split())
-        self.assertEqual(book.title, 'title')
-        self.assertEqual(book.publish_date, 2010)
-        self.assertEqual(book.notes, 'test')
- 
-            
-class OpenLibApi():
-    """
-    Deprecated test suite
-    """
-
-    def setUp(self):
-        self.api = OpenLibApi()
-        self.isbn = '978-0123944245'
-
-    def test_get_json(self):
-        """Asserts the opebooks API hasn't changed and still sends the samestuff"""
-        with open('test-json.json') as f:
-            json_stored = json.load(f)
-        j = self.api.get_json([self.isbn])
-        self.assertEqual(j, json_stored)
-    
-    def test_get_book(self):
-        """Test the book is built correctly fetched from the API"""
-        book = self.api.get_book(self.isbn)
-        authors = ['David Money Harris']
-        isbn = '9780123944245'
-        publish_date = '2013'
-        title = 'Digital design and computer architecture'
-        self.assertEqual(book.title, title)
-        self.assertEqual(book.authors, authors)
-        self.assertEqual(book.isbn, isbn)
-        self.assertEqual(book.publish_date, publish_date)
-
-    def test_get_books(self):
-        isbns = ['9780123944245', '9780756404741']
-        books = self.api.get_books(isbns)
-        self.assertEqual(len(books), 2)
+    def parse_overload(self, args):
+        """Hacky overload function to deal with weird CLI problem with bookman
+        where it has one more argument than necessary. Adds an argument that will
+        get thrown out by the original parse method"""
+        args = ['disposable-arg'] + args
+        return self.i.original_parse(args)
 
         
-class TestGoogleBooksApi(TestCase):
-    """
-    """
-    def setUp(self):
-        self.api = GoogleBooksApi()
-        self.isbn = '9780123944245'
-        with open('test-json-google.json') as f:
-            self.json_ref = json.load(f)
+    def test_parse_valid(self):
+        """Test parse function with valid arguments"""
+        args = '-c config -f json -d dir search'.split()
+        parsed = self.i.parse(args)
+        self.assertEqual(parsed.config, 'config')
+        self.assertEqual(parsed.api_key, '')
+        self.assertEqual(parsed.books_json, 'json')
+        self.assertEqual(parsed.books_dir, 'dir')
+        self.assertEqual(parsed.command, 'search')
+        
+    def test_parse_invalid(self):
+        """Test parse function with invalid arguments"""
+        args = '-c config invalid-command'.split()
+        with self.assertRaises(SystemExit):
+            parsed = self.i.parse(args)
 
-    def test_get_json(self):
-        """Asserts the opebooks API hasn't changed and still sends the samestuff"""
-        json_ref = self.json_ref['items'][0]['volumeInfo']
-        j = self.api.get_json([self.isbn])[0]
-        self.assertEqual(j, json_ref)
-    
-    def test_get_book(self):
-        """Test the book is built correctly fetched from the API"""
-        book = self.api.get_book(self.isbn)
-        data = self.json_ref['items'][0]
-        authors = data['volumeInfo']['authors']
-        isbn = data['volumeInfo']['industryIdentifiers'][0]['identifier']
-        publish_date = data['volumeInfo']['publishedDate']
-        title = data['volumeInfo']['title']
-        self.assertEqual(book.title, title)
-        self.assertEqual(book.authors, authors)
-        self.assertEqual(book.isbn, isbn)
-        self.assertEqual(book.publish_date, publish_date)
+    def test_config_from_env(self):
+        """Test configurating bookman from environment variables"""
+        environ['API_KEY'] = 'key'
+        environ['BOOKS_JSON'] = 'json'
+        environ['BOOKS_DIR'] = 'dir'
+        self.i.load_env()
+        self.assertEqual(self.i.lib_attrs['books_json'], 'json')
+        self.assertEqual(self.i.lib_attrs['api_key'], 'key')
+        self.assertEqual(self.i.lib_attrs['books_dir'], 'dir')
+       
 
-    def test_get_books(self):
-        isbns = ['9780123944245', '9780756404741']
-        books = self.api.get_books(isbns)
-        self.assertEqual(len(books), 2)
+    def test_config_from_file(self):
+        """Test bookman configuration from file"""
+        args = '-c resources/config.ini search'.split()
+        parsed = self.i.parse(args)
+        self.i.load_ini(parsed)
+        self.assertEqual(self.i.lib_attrs['books_json'], 'json')
+        self.assertEqual(self.i.lib_attrs['api_key'], 'key')
+        self.assertEqual(self.i.lib_attrs['books_dir'], 'directory')
 
+    def test_config_from_arguments(self):
+        """Test configurating bookman from the cli arguments"""
+        args = '-c config -k key -d dir -f json search'.split()
+        parsed = self.i.parse(args)
+        self.i.config_from_args(parsed)
+        self.assertEqual(self.i.lib_attrs['books_json'], parsed.books_json)
+        self.assertEqual(self.i.lib_attrs['api_key'], parsed.api_key)
+        self.assertEqual(self.i.lib_attrs['books_dir'], parsed.books_dir)
+
+    def test_configuration_overwriting(self):
+        """Test that configuration option overwriting priority is correct.
+        eg. configurations from file are overwritten by environment"""
+        args = '-c resources/config.ini -k key_args -d dir_args -f json_args search'.split()
+        parsed = self.i.parse(args)
+        self.i.config_from_args(parsed)
+        self.i.config_from_args(parsed)
+        self.assertEqual(self.i.lib_attrs['books_json'], 'json_args')
+        self.assertEqual(self.i.lib_attrs['api_key'], 'key_args')
+        self.assertEqual(self.i.lib_attrs['books_dir'], 'dir_args')
+
+    def test_default_init(self):
+        """Test that default configuration file is created when absent."""
+        pass
 
 if __name__ == '__main__':
     main()
