@@ -71,7 +71,7 @@ class Command:
         parser = argparse.ArgumentParser(description=self.add.__doc__)
         parser.add_argument('isbn')
         args = parser.parse_args(top_args)
-        books = self.lib.search(args.pattern)
+        books = self.lib.search(args.isbn)
         paths = self.lib.get_paths(books)
         with paths[0].open('rb') as f:
             sys.stdout.buffer.write(f.read())

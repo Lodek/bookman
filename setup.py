@@ -6,4 +6,6 @@ setuptools.setup(
     author='Lodek',
     description='Book manager',
     packages=setuptools.find_packages(),
-    entrypoints={'console_scripts' : ['bookman = bookman.bookman:main']})
+    entrypoints={'console_scripts' : ['bookman = bookman.bookman:main'],
+                 'gui_scripts' : ['bookman = bookman.bookman:main']})
+
