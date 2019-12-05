@@ -4,7 +4,7 @@ Module with book API classes that request book information from the web
 import requests
 from bookman.model import Book
 
-class GoogleBooksAPI:
+class GoogleBooksApi:
     """Base class that define a general interface for different information apis.
     The methods _construct_book() and get_json() are api specific and must
     be defined in the subclasses.
