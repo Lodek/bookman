@@ -1,30 +1,33 @@
-from mycollections.url import Url
+from mycollections.url import URL
+import requests
 
 class InvalidKeywordError(RuntimeError):
 
     def __init__(self, keyword, allowed_keywords):
-        err = f'Keyword {key} invalid for volume query, allowed keywords
+        err = f'Keyword {key} invalid for volume query, allowed keywords\
                 are {allowed_keywords}'
         super(err)
 
 class Api:
     """
-    GoogleBooks API abstraction
+    GoogleBooks API abstraction.
+    Incomplete and only implmenets volumes endpoints
     """
-    BASE_URL = Url('https://www.googleapis.com/books/v1/')
+    BASE_URL = URL.from_string('https://www.googleapis.com/books/v1/')
     volumes = BASE_URL / 'volumes'
 
     def __init__(self, api_key=''):
         self.api_key = api_key
-        self.url = URL(api_url)
-
+        self.api_url = Api.volumes
+        
     def _get_json(self, url):
         """Perform a request to the given url, return json """
-        #TODO: add error handling for request
-        #TODO: change api_key stuff to use Url class 
-        url = url + f'&key={self.api_key}' if self.api_key else url
+        if self.api_key:
+            url = url.add_query(dict(key=self.api_key))
         r = requests.get(url)
-        return r.json
+        if r.status_code != 200:
+            raise RuntimeError(r.content)
+        return r.json()
 
 
     @staticmethod
