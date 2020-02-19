@@ -46,13 +46,15 @@ class Api:
         """Perform a query over the volumes endpoints.
         Receive query string and dictionary with query special keywords as 
         explained in the documentation.
+        Processes query string and remove special/special characters
         Source: https://developers.google.com/books/docs/v1/using#PerformingSearch"""
         allowed_keywords = 'intitle inauthor inpublisher subject isbn lccn oclc'.split()
         for key in kwargs:
             if key not in allowed_keywords:
                 raise InvalidKeywordError
         keywords = self._serialize_dict(kwargs, kv_separator=':', join_symbol='+')
-        q = {'q' : query.replace(' ', '+') + '+' + keywords}
+        query = re.sub(r'[ -|:()\][]', '+', query)
+        q = {'q' : query + '+' + keywords}
         url = self.volumes.add_query(q)
         return self._get_json(url)
 
