@@ -1,6 +1,7 @@
-from bookman.model import Lib
-from bookman.api import GoogleBooksApi
 import subprocess, configparser, argparse, sys, os, re
+from bookman.api_wrapper import ApiWrapper
+from bookman.google_books import Api
+from bookman.model import Lib
 from pathlib import Path
 
 class Command:
@@ -91,13 +92,13 @@ class Command:
         print('Select result that matches book being added')
         for i, book in enumerate(results):
             print(f'{i} - {str(book)}')
-       choice = input('Input a number') 
-       try:
-           index = int(choice)
-       except ValueError:
-           print(f'Error, {choice} is not a number in the allowed range. Exiting.',
-                 file=sys.stderr)
-           exit()
+        choice = input('Input a number') 
+        try:
+            index = int(choice)
+        except ValueError:
+            print(f'Error, {choice} is not a number in the allowed range. Exiting.',
+                    file=sys.stderr)
+            exit()
         book = results[index]
         self.lib.add_books((book.isbn))
         self.lib.save()
@@ -121,8 +122,9 @@ class Interface:
         args = self.parse()
         self.load_ini(args)
         self.load_env()
-        self.config_from_args(args)
-        lib = Lib(api=GoogleBooksApi, **self.lib_attrs)
+        self.confi_from_args(args)
+        api = ApiWrapper(self.lib_attrs['api_key'])
+        lib = Lib(api=api, **self.lib_attrs)
         lib.load()
         Command.call(lib, args)
 
@@ -155,7 +157,7 @@ class Interface:
         config = configparser.ConfigParser()
         path = Path(args.config).expanduser().absolute()
         if not path.is_file():
-            self.write_default_config(path)
+            self.write_default_ini(path)
         config.read(path)
         c = config['bookman']
         for attr in self.attributes:
