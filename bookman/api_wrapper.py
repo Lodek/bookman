@@ -2,8 +2,6 @@
 Module with book API classes that request book information from the web
 """
 from bookman.model import Book
-from bookman.google_books import Api
-
 
 class ApiWrapper:
     """
