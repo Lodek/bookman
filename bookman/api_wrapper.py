@@ -10,30 +10,43 @@ class ApiWrapper:
     Wrapper for Google Books Api which does json processing and implements
     utility functions to be used directly with bookman's model objects.
     """
-    def __init__(self, api_key):
-        self.api = Api(api_key)
+    def __init__(self, api):
+        self.api = api
 
 
     def get_books(self, isbns):
         """Construct Book objects from a list of isbns, return list of books"""
         return [self.get_book(isbn) for isbn in isbns]
 
-            
+
     def get_book(self, isbn):
         """Construct Book object from a single ISBN identifier, return book."""
         json = self.api.query_volumes_isbn(isbn)
-        volume_info = json['items'][0]['volumeInfo']
-        return self.book_from_info(volume_info)
-               
+        item = json['items'][0]
+        return self.book_from_item(item)
 
-    def book_from_info(self, volume_info):
-        """volume_info is a dict matching a volumeInfo json retrieved from the api.
-        Method process the JSON and return Book object"""
-        volume_info = json['items'][0]['volumeInfo']
-        title = volume_info['title']
-        authors = volume_info['authors']
-        publish_date = volume_info['publishedDate']
-        isbn = [d['identifier'] for d in volume_info['industryIdentifiers'] if d['type'] == 'ISBN_13'][0]
+    def _try_get(self, d, key, default):
+        """DRY function to try catch accessing value in dict, return default
+        if value not key."""
+        try:
+            value = d[key]
+        except KeyError:
+            value = default
+        return value
+
+    def book_from_item(self, item):
+        """item is a dict matching an item json retrieved from the api.
+        Method process the JSON and return Book object.
+        If book has no ISBN we doomed, or are we?"""
+        volume_info = item['volumeInfo']
+        title = self._try_get(volume_info, 'title', 'untitled')
+        authors = self._try_get(volume_info, 'authors', ['unknown'])
+        publish_date = self._try_get(volume_info, 'publishedDate', '1969-06-09')
+        identifiers = filter(lambda id : 'ISBN' in id['type'], volume_info['industryIdentifiers'])
+        try:
+            isbn = next(identifiers)['identifier']
+        except StopIteration:
+            isbn = '039480001X'
         book = Book(authors=authors, title=title, isbn=isbn, publish_date=publish_date)
         return book
 
@@ -41,6 +54,6 @@ class ApiWrapper:
         """Query the api with the query string, return list of 10 Book objects
         that returned from query"""
         json = self.api.query_volumes(query)
-        volume_infos = json['items'][:10]
-        books = [self.book_from_info(v) for v in volume_infos]
+        items = json['items'][:10]
+        books = [self.book_from_item(item) for item in items]
         return books

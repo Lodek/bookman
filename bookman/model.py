@@ -78,6 +78,11 @@ class Lib:
             if book not in self.books:
                 self.books.append(book)
 
+    def query_web(self, query):
+        """ """
+        q = re.sub(r'[- _|[\]()]', '+', args.file)
+        return self.api.query_books(query)
+
     def load(self):
         try:
             with open(self.books_json) as f:

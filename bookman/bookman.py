@@ -1,6 +1,6 @@
 from bookman.model import Lib
 from bookman.api import GoogleBooksApi
-import subprocess, configparser, argparse, sys, os
+import subprocess, configparser, argparse, sys, os, re
 from pathlib import Path
 
 class Command:
@@ -76,6 +76,31 @@ class Command:
         with paths[0].open('rb') as f:
             sys.stdout.buffer.write(f.read())
 
+    def add_from_file(self, top_args):
+        """Take name of the specified file and queries google books with the name of the file.
+        The top 5 matches will be returned and the user will asked which match
+        matches the book being added. Adds the book based on the select match"""
+        parser = argparse.ArgumentParser(description=self.add.__doc__)
+        parser.add_argument('file')
+        query_help = 'Query to be used in google books, if empty bookman will\
+        generate a query based on the name of the given file'
+        parser.add_argument('--query', help=query_help, default='')
+        args = parser.parse_args(top_args)
+        q = args.query if args.query else args.file
+        results = self.lib.query_web(q)
+        print('Select result that matches book being added')
+        for i, book in enumerate(results):
+            print(f'{i} - {str(book)}')
+       choice = input('Input a number') 
+       try:
+           index = int(choice)
+       except ValueError:
+           print(f'Error, {choice} is not a number in the allowed range. Exiting.',
+                 file=sys.stderr)
+           exit()
+        book = results[index]
+        self.lib.add_books((book.isbn))
+        self.lib.save()
 
 
 class Interface:
