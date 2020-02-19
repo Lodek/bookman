@@ -55,11 +55,10 @@ class Book:
 
 class Lib:
     
-    def __init__(self, books_dir, books_json, api_key, api):
+    def __init__(self, books_dir, books_json, api):
         self.books_dir = Path(books_dir).expanduser().absolute()
         self.books_json = Path(books_json).expanduser().absolute()
-        self.api_key = api_key
-        self.api = api(api_key)
+        self.api = api
         self.books = []
         
     
