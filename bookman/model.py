@@ -53,6 +53,11 @@ class Book:
         return '\t'.join([self.title, ';'.join(self.authors), self.publish_date,
                           self.isbn, ','.join(self.tags), ','.join(self.aliases)])
 
+    def file_name(self):
+        """Generate a book's file name based on its attributes, return file name"""
+        return self.isbn
+
+
 class Lib:
     
     def __init__(self, books_dir, books_json, api):
@@ -64,7 +69,7 @@ class Lib:
     
     def get_paths(self, books):
         """Return list of path objects for book in books"""
-        return [self.books_dir / f'{book.isbn}.pdf' for book in books]
+        return [self.books_dir / f'{book.file_name()}.pdf' for book in books]
         
     def search(self, exp):
         """Iterate over list of books, search for the given text in the given attr, return list of matches"""
