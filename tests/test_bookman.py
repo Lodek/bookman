@@ -4,11 +4,13 @@ Test module for the bookman.py module
 """
 from unittest import TestCase, main
 from bookman.bookman import Interface
+from pathlib import Path
 from os import environ
 
 class TestInterface(TestCase):
     """
     """
+    assets = Path(__file__).expanduser().absolute().parent / 'assets'
     def setUp(self):
         """Patches Interface's parse method with a custom one that alters args
         so tests can execute correctly"""
@@ -56,7 +58,7 @@ class TestInterface(TestCase):
 
     def test_config_from_file(self):
         """Test bookman configuration from file"""
-        args = '-c resources/config.ini search'.split()
+        args = f'-c {self.assets/"config.ini"} search'.split()
         parsed = self.i.parse(args)
         self.i.load_ini(parsed)
         self.assertEqual(self.i.lib_attrs['books_json'], 'json')
@@ -75,7 +77,7 @@ class TestInterface(TestCase):
     def test_configuration_overwriting(self):
         """Test that configuration option overwriting priority is correct.
         eg. configurations from file are overwritten by environment"""
-        args = '-c resources/config.ini -k key_args -d dir_args -f json_args search'.split()
+        args = f'-c {self.assets/"config.ini"} -k key_args -d dir_args -f json_args search'.split()
         parsed = self.i.parse(args)
         self.i.config_from_args(parsed)
         self.i.config_from_args(parsed)
