@@ -1,5 +1,5 @@
 from mycollections.url import URL
-import requests
+import requests, re
 
 class InvalidKeywordError(RuntimeError):
 
@@ -53,7 +53,7 @@ class Api:
             if key not in allowed_keywords:
                 raise InvalidKeywordError
         keywords = self._serialize_dict(kwargs, kv_separator=':', join_symbol='+')
-        query = re.sub(r'[ -|:()\][]', '+', query)
+        query = re.sub(r'[ :|\[\]\(\)]', '+', query)
         q = {'q' : query + '+' + keywords}
         url = self.volumes.add_query(q)
         return self._get_json(url)
