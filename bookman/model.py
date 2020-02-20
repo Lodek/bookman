@@ -16,7 +16,6 @@ class Book:
         self.tags = []
         self.notes = ''
         self.aliases = []
-        self.file_name = ''
         for attr, value in kwargs.items():
             try:
                 getattr(self, attr)
@@ -53,7 +52,7 @@ class Book:
         return '\t'.join([self.title, ';'.join(self.authors), self.publish_date,
                           self.isbn, ','.join(self.tags), ','.join(self.aliases)])
 
-    def file_name(self):
+    def get_file_name(self):
         """Generate a book's file name based on its attributes, return file name"""
         return self.isbn
 
@@ -69,7 +68,7 @@ class Lib:
     
     def get_paths(self, books):
         """Return list of path objects for book in books"""
-        return [self.books_dir / f'{book.file_name()}.pdf' for book in books]
+        return [self.books_dir / f'{book.get_file_name()}.pdf' for book in books]
         
     def search(self, exp):
         """Iterate over list of books, search for the given text in the given attr, return list of matches"""
@@ -84,7 +83,6 @@ class Lib:
 
     def query_web(self, query):
         """ """
-        q = re.sub(r'[- _|[\]()]', '+', args.file)
         return self.api.query_books(query)
 
     def load(self):

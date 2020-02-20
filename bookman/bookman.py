@@ -1,4 +1,4 @@
-import subprocess, configparser, argparse, sys, os, re
+import subprocess, configparser, argparse, shutil, sys, os, re
 from bookman.api_wrapper import ApiWrapper
 from bookman.google_books import Api
 from bookman.model import Lib
@@ -9,7 +9,7 @@ class Command:
     Class for cli functions of bookman
     """
 
-    choices = 'dump search add list open'.split()
+    choices = 'dump search add list open add_from_file'.split()
 
     def __init__(self, lib):
         self.lib = lib
@@ -87,7 +87,9 @@ class Command:
         generate a query based on the name of the given file'
         parser.add_argument('--query', help=query_help, default='')
         args = parser.parse_args(top_args)
-        q = args.query if args.query else args.file
+        p = Path(args.file)
+        file_name = re.sub(r'\..*$', '', p.name)
+        q = args.query if args.query else file_name
         results = self.lib.query_web(q)
         print('Select result that matches book being added')
         for i, book in enumerate(results):
@@ -100,8 +102,17 @@ class Command:
                     file=sys.stderr)
             exit()
         book = results[index]
-        self.lib.add_books((book.isbn))
+        self.lib.add_books([book.isbn])
         self.lib.save()
+        self.copy_book(book.isbn, args.file)
+
+    def copy_book(self, isbn, file_name):
+        """ """
+        p = Path(file_name)
+        book = self.lib.search(isbn)[0]
+        target = book.get_file_name() + p.suffix
+        shutil.copy(file_name, self.lib.books_dir / target)
+        
 
 
 class Interface:
@@ -122,9 +133,10 @@ class Interface:
         args = self.parse()
         self.load_ini(args)
         self.load_env()
-        self.confi_from_args(args)
-        api = ApiWrapper(self.lib_attrs['api_key'])
-        lib = Lib(api=api, **self.lib_attrs)
+        self.config_from_args(args)
+        api = Api(self.lib_attrs['api_key'])
+        wrapper = ApiWrapper(api)
+        lib = Lib(api=wrapper, books_json=self.lib_attrs['books_json'], books_dir=self.lib_attrs['books_dir'])
         lib.load()
         Command.call(lib, args)
 
