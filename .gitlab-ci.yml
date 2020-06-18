@@ -58,10 +58,11 @@ version_toml:
     - echo "Merged branch ${merge_branch}"
     - new_version="$(python3 ${scripts}/version-bump ${current_version} $merge_branch)"
     - 'echo "New version: $new_version"'
-    - python3 ${scripts}/update-toml pyproject.toml $new_version > pyproject.toml
+    - python3 ${scripts}/update-toml pyproject.toml $new_version > tmp.toml
+    - mv tmp.toml pyproject.toml
     - git add pyproject.toml && git commit --message "version bump in toml"
     - git checkout -b tagger-master tagger/master
-    - git merge --squash pre-master-tagger 
+    - git merge --strategy-option=theirs --squash pre-master-tagger 
     - git commit --no-edit
     - "git push tagger tagger-master:master"
 
