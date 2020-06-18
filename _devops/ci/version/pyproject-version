@@ -1,0 +1,23 @@
+#!/bin/env python
+import argparse, sys, os, re
+
+def get_args():
+    parser = argparse.ArgumentParser(description='Read `version` field fromm pyproject file')
+    parser.add_argument('toml', help='Path to pyproject.toml')
+    return parser.parse_args()
+
+def get_version(file_path):
+    with open(file_path, 'r') as f:
+        txt = f.read()
+    regex = re.compile(r"""^version *?= *?['"]([0-9.]+)['"]$""", flags=re.MULTILINE)
+    match = regex.search(txt)
+    return match.group(1)
+
+def main():
+    args = get_args()
+    version = get_version(args.toml)
+    print(version)
+    
+if __name__ == '__main__':
+    main()
+

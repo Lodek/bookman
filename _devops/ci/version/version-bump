@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import argparse
+
+def version_bump(version, branch_name):
+    fields = list(map(int, version.split('.')))
+    if 'feature/' in branch_name:
+        fields[1] += 1
+        fields[2] = 0
+    elif 'bugfix/' in branch_name or 'hotfix/' in branch_name:
+        fields[2] += 1
+    elif 'release/' in branch_name:
+        fields[0] += 1
+        fields[1] = 0
+        fields[2] = 0
+    return str.join('.', map(str, fields))
+    
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+    bumped = version_bump(args.version, args.branch_name)
+    print(bumped)
+
+def get_parser():
+    desc = """Generates the correct version bump based on a branch name and the current version.
+Increments the version file based on gitflow's branching name convention.
+Branches prefixed with `bugfix` or `hotfix` bumps the patch field.
+Branches prefixed with `feature` increments the minor field.
+Branches prefixed with `release` increments the major field."""
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('version', help='Current version')
+    parser.add_argument('branch_name', help='Merge request source branch name')
+    return parser
+
+if __name__ == '__main__':
+    main()

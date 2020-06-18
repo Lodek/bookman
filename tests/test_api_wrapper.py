@@ -6,7 +6,7 @@ from bookman.api_wrapper import ApiWrapper
 from unittest.mock import MagicMock, Mock
 from unittest import TestCase, main
 from pathlib import Path
-import json
+import json, os
 
 
 class TestApiWrapper(TestCase):
@@ -15,8 +15,9 @@ class TestApiWrapper(TestCase):
     """
     test_folder = Path(__file__).expanduser().absolute().parent
     def setUp(self):
-        self.api = MagicMock()
-        self.wrapper = ApiWrapper(self.api)
+        config = MagicMock()
+        config.api_key = os.environ['API_KEY']
+        self.wrapper = ApiWrapper(config)
 
     def get_assets_json(self, file_name):
         asset = self.test_folder / 'assets' / file_name
@@ -66,18 +67,14 @@ class TestApiWrapper(TestCase):
         When called query_books
         Then return should be list of books for entries in the book results
         """
-        #given
         asset = 'volumes_query.json'
         volumes = self.get_assets_json(asset)
-        self.api.query_volumes = MagicMock(return_value=volumes)
 
         q = 'digital+design+harris'
         books = self.wrapper.query_books(q)
         
         self.assertEqual('Digital Design and Computer Architecture', books[0].title)
         self.assertEqual(len(books), 10)
-
-
 
 if __name__ == '__main__':
     main()

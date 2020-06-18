@@ -1,0 +1,103 @@
+image: 
+  name: python:3.8-buster
+
+cache:
+  paths:
+    - .venv
+
+variables:
+  poetry: .venv/bin/poetry
+
+stages:
+  - lint
+  - build
+  - test
+  - version
+  - deliver
+
+setup:
+  stage: .pre
+  script:
+    - python -m venv .venv
+    - .venv/bin/pip -q install poetry
+    - .venv/bin/poetry config virtualenvs.in-project true
+    - .venv/bin/poetry install
+
+test:
+  stage: test
+  script:
+    - ${poetry} run python -m unittest tests/*.py
+
+
+version_toml:
+  stage: version
+  image: debian:buster
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "pre-master"'
+      when: on_success
+  variables:
+    repository: git@gitlab.com:lodek/bookman.git
+    git_user: "Gitlab CI"
+    git_email: "lodek@protonmail.com"
+  script:
+    - echo "Environment setup"
+    - apt update && apt install --quiet --yes python3 ssh git #add cache debian apt
+    - eval $(ssh-agent -s) && mkdir ~/.ssh && ssh-keyscan -H gitlab.com > ~/.ssh/known_hosts
+    - echo -n ${GITLAB_SSH_KEY} | base64 -d - | ssh-add -
+    - git remote add tagger $repository
+    - git config user.name ${git_user}
+    - git config user.email ${git_email}
+    - git fetch --tags tagger
+    - git checkout -b pre-master-tagger tagger/pre-master
+    - scripts=_devops/ci/version
+    - echo "end of setup"
+    - current_version="$(python3 ${scripts}/pyproject-version pyproject.toml)"
+    - echo "Current version ${current_version}"
+    - merge_branch="$(git log | python3 ${scripts}/merge-branch)"
+    - echo "Merged branch ${merge_branch}"
+    - new_version="$(python3 ${scripts}/version-bump ${current_version} $merge_branch)"
+    - 'echo "New version: $new_version"'
+    - python3 ${scripts}/update-toml pyproject.toml $new_version > pyproject.toml
+    - git add pyproject.toml && git commit --message "version bump in toml"
+    - git checkout -b tagger-master tagger/master
+    - git merge --squash pre-master-tagger 
+    - git commit --no-edit
+    - "git push tagger tagger-master:master"
+
+version:
+  stage: version
+  image: debian:buster
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: on_success
+  artifacts:
+    paths:
+      - VERSION
+  variables:
+    repository: git@gitlab.com:lodek/bookman.git
+    git_user: "Gitlab CI"
+    git_email: "lodek@protonmail.com"
+  script:
+    - apt update && apt install --quiet --yes git python3 ssh
+    - eval $(ssh-agent -s) && mkdir ~/.ssh && ssh-keyscan -H gitlab.com > ~/.ssh/known_hosts
+    - echo -n ${GITLAB_SSH_KEY} | base64 -d - | ssh-add -
+    - git remote add tagger $repository
+    - git config user.name ${git_user}
+    - git config user.email ${git_email}
+    - git fetch --tags tagger
+    - _devops/ci/version/tag-release
+    - _devops/ci/version/last-release > VERSION
+    - git tag && git log -n 5
+    - git push --tags tagger 
+
+deliver:
+  stage: deliver
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: on_success
+  script:
+    - token=$(echo ${PYPI_TOKEN} | base64 -d)
+    - ${poetry} publish --build --username "__token__" --password ${token}
+

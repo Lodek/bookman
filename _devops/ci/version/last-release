@@ -1,0 +1,2 @@
+#!/bin/sh
+git tag -l 'v*' | sort -V | tail -n 1 | cut -c 2-
