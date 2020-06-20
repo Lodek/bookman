@@ -84,7 +84,6 @@ class Open(ControllerABC):
 
 class Dump(ControllerABC):
     """Write the book identified by the given ISBN to stdout"""
-
     @property
     def command_name(self):
         return 'dump'
@@ -97,6 +96,18 @@ class Dump(ControllerABC):
         paths = self.lib.get_paths(books)
         with paths[0].open('rb') as f:
             sys.stdout.buffer.write(f.read())
+
+class Migrate(ControllerABC):
+    """Update books.json file to match the attributes in the book class"""
+    @property
+    def command_name(self):
+        return 'migrate'
+
+    def parser_config(self):
+        pass
+
+    def _controller(self, args):
+        self.lib.save()
 
 
 

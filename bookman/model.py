@@ -8,20 +8,27 @@ class Book:
     """
     Abstraction for a book
     """
-    def __init__(self, authors, title, isbn, publish_date, **kwargs):
-        self.authors = authors
-        self.title = title
-        self.isbn = isbn
-        self.publish_date = publish_date
-        self.tags = []
-        self.notes = ''
-        self.aliases = []
+    authors = []
+    title = ''
+    isbn = ''
+    publish_date = ''
+    tags = []
+    notes = ''
+    aliases = []
+
+    @classmethod
+    def get_attrs(cls):
+        names = set(dir(cls)) - set(dir(super()))
+        function_type = type(cls._asdict)
+        attrs = [name for name in names
+                 if not hasattr(getattr(cls, name), '__call__')
+                 and '__' not in name]
+        return attrs
+        
+
+    def __init__(self, **kwargs):
         for attr, value in kwargs.items():
-            try:
-                getattr(self, attr)
-                setattr(self, attr, value)
-            except AttributeError:
-                raise AttributeError(f'Invalid attr {attr}.')
+            setattr(self, attr, value)
 
     def __eq__(self, other):
         """Compare books based on their ISBN, if it matches they are equal"""
@@ -29,8 +36,7 @@ class Book:
 
     def _asdict(self):
         """Serialize self to a dict"""
-        attrs = 'authors title isbn publish_date tags notes aliases'.split()
-        return {attr : getattr(self, attr) for attr in attrs}
+        return {attr : getattr(self, attr) for attr in self.get_attrs()}
 
     def to_json(self):
         """Serialize Book to a json"""
@@ -65,7 +71,6 @@ class Lib:
         self.api = api
         self.books = []
         
-    
     def get_paths(self, books):
         """Return list of path objects for book in books"""
         return [self.books_dir / f'{book.get_file_name()}.pdf' for book in books]

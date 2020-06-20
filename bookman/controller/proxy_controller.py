@@ -4,6 +4,7 @@ Sequentially source the configuration variables, parses the top lvl args
 and routes the arguments to the appropriate command.
 """
 import argparse, os, re
+from pathlib import Path
 from bookman.api_wrapper import ApiWrapper
 from bookman.model import Lib
 import bookman.properties as props
@@ -26,10 +27,14 @@ class ProxyController(ControllerABC):
     def _controller(self, args):
         """Parse command line arguments, initialize and load Lib, route
         command to Command class"""
-        config_file = self._determine_config(args.config)
+        config_file = Path(self._determine_config(args.config))
         cli_properties = self._parse_cli_properties(args.p)
         configurator = Configurator(config_file, cli_properties)
         config = configurator.config
+        if config.api_key_file:
+            with open(config.api_key_file) as f:
+                key = f.read().strip('\n')
+                config.api_key = key
         wrapper = ApiWrapper(config)
         lib = Lib(api=wrapper, books_json=config.books_json, books_dir=config.books_dir)
         lib.load()
@@ -74,3 +79,4 @@ class ProxyController(ControllerABC):
                                  help='bookman config file')
         self.parser.add_argument('-p', required=False, default=[], action='append',
                                  help='Sets a property in the format key=value. Will override value in user defined config')
+
