@@ -17,6 +17,13 @@ class Book:
     aliases = []
 
     @classmethod
+    def inject_attributes(cls, attrs):
+        """Receive dictionary whose items are going to be added as attributes
+        to Book. The value for a key is set as the default value for the attr"""
+        for key, value in attrs.items():
+            setattr(cls, key, value)
+
+    @classmethod
     def get_attrs(cls):
         names = set(dir(cls)) - set(dir(super()))
         function_type = type(cls._asdict)

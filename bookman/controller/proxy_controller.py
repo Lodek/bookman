@@ -6,7 +6,7 @@ and routes the arguments to the appropriate command.
 import argparse, os, re
 from pathlib import Path
 from bookman.api_wrapper import ApiWrapper
-from bookman.model import Lib
+from bookman.model import Lib, Book
 import bookman.properties as props
 from bookman.configurator import Configurator
 
@@ -36,6 +36,7 @@ class ProxyController(ControllerABC):
                 key = f.read().strip('\n')
                 config.api_key = key
         wrapper = ApiWrapper(config)
+        Book.inject_attributes(config.extra_attrs)
         lib = Lib(api=wrapper, books_json=config.books_json, books_dir=config.books_dir)
         lib.load()
         self._proxy(lib, args.command, args.args)

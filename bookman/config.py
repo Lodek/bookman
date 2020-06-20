@@ -3,6 +3,6 @@ books_dir = '~/books' #directory with books
 api_key = '' #googlebooks api key
 api_key_file = ''
 
-class Meta:
-    notes = ''
-    last_opened = ''
+#Dictionary item with customizable fields which will be added to the model
+extra_attrs = {
+}

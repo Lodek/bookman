@@ -25,10 +25,6 @@ class TestBook(TestCase):
         self.assertEqual(book.authors, 'a1 a2'.split())
         self.assertEqual(book.title, 'title')
         self.assertEqual(book.publish_date, 2010)
-        
-        with self.assertRaises(AttributeError):
-            self.book_d['invalid_attr'] = 'invalid'
-            book = Book(**self.book_d)
 
     def test_serialize(self):
         """Assert serialize method generates the correct json"""
