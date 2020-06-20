@@ -1,3 +1,7 @@
+# 1.3.0 - 2020-06-21
+## Added
+- Path attribute to book model
+
 # 1.2.0 - 2020-06-20
 ## Added
 - extra_attrs configuration directive: user can not choose custom attributes for model

@@ -15,6 +15,7 @@ class Book:
     tags = []
     notes = ''
     aliases = []
+    path = ''
 
     @classmethod
     def inject_attributes(cls, attrs):
