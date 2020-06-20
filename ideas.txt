@@ -1,12 +1,8 @@
-
 bookman
 - need to add filename field
 - option to `add` file which takes a filename, querries googlebooks, fine isbn, prompts user for confirmation, make a copy of the book to books_dir.
 - would be cool to integrate with good reads or something, applications have to talk to each other nowdays. I don't use it though, so who cares
 - def need to think of a way to edit books, maybe restructured text to print the book in a text buffer, save and load it from there
-- 
-
-
 
 title
 -----
@@ -28,4 +24,3 @@ tags
 
 file name
 ---------
-
