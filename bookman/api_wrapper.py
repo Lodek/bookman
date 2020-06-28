@@ -43,9 +43,11 @@ class ApiWrapper:
         title = self._try_get(volume_info, 'title', 'untitled')
         authors = self._try_get(volume_info, 'authors', ['unknown'])
         publish_date = self._try_get(volume_info, 'publishedDate', '1969-06-09')
-        identifiers = filter(lambda id: 'ISBN' in id['type'], volume_info['industryIdentifiers'])
         try:
+            identifiers = filter(lambda id: 'ISBN' in id['type'], volume_info['industryIdentifiers'])
             isbn = next(identifiers)['identifier']
+        except KeyError:
+            isbn = '0'
         except StopIteration:
             isbn = '0'
         book = Book(authors=authors, title=title, isbn=isbn, publish_date=publish_date)
@@ -77,4 +79,4 @@ class ApiWrapper:
         join_token = '+'
         assignment_token = ':'
         return join_token.join([f'{key}{assignment_token}{value}'
-                                for key, value in kwargs])
+                                for key, value in kwargs.items()])

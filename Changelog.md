@@ -1,3 +1,13 @@
+# 1.4.0 - 2020-06-28
+## Added
+- Query command
+- Add from file command
+- Associate command
+## Fixed
+- Minor logic errors spread throughout the code
+## Changed
+- Open command now recurssively search a direectory for files that contains, in their name, the isbn of one of the books that match the given query criteria
+
 # 1.3.0 - 2020-06-21
 ## Added
 - Path attribute to book model

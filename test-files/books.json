@@ -7,7 +7,6 @@
         "extra": "default",
         "isbn": "9780071147163",
         "notes": "",
-        "path": "",
         "publish_date": "1995-10-30",
         "tags": [],
         "title": "Calculus with Analytic Geometry"
@@ -21,7 +20,6 @@
         "extra": "default",
         "isbn": "9780080547060",
         "notes": "",
-        "path": "",
         "publish_date": "2010-07-26",
         "tags": [],
         "title": "Digital Design and Computer Architecture"
@@ -38,7 +36,6 @@
         "extra": "default",
         "isbn": "9780262032933",
         "notes": "",
-        "path": "",
         "publish_date": "2001",
         "tags": [],
         "title": "Introduction To Algorithms"
@@ -51,7 +48,6 @@
         "extra": "default",
         "isbn": "9780262526548",
         "notes": "",
-        "path": "",
         "publish_date": "2014-11-07",
         "tags": [],
         "title": "The Art of Insight in Science and Engineering"
@@ -64,7 +60,6 @@
         "extra": "default",
         "isbn": "9780316438971",
         "notes": "",
-        "path": "",
         "publish_date": "2017-10-03",
         "tags": [],
         "title": "The Witcher Boxed Set: Blood of Elves, The Time of Contempt, Baptism of Fire"
@@ -78,7 +73,6 @@
         "extra": "default",
         "isbn": "9780321413703",
         "notes": "",
-        "path": "",
         "publish_date": "2007",
         "tags": [],
         "title": "Chemistry"
@@ -91,7 +85,6 @@
         "extra": "default",
         "isbn": "9780387982595",
         "notes": "",
-        "path": "",
         "publish_date": "1997-07-18",
         "tags": [],
         "title": "Linear Algebra Done Right"
@@ -104,7 +97,6 @@
         "extra": "default",
         "isbn": "9780393249866",
         "notes": "",
-        "path": "",
         "publish_date": "2015-09-21",
         "tags": [],
         "title": "The Food Lab: Better Home Cooking Through Science"
@@ -117,7 +109,6 @@
         "extra": "default",
         "isbn": "9780393925166",
         "notes": "",
-        "path": "",
         "publish_date": "2005",
         "tags": [],
         "title": "Div, Grad, Curl, and All that"
@@ -130,7 +121,6 @@
         "extra": "default",
         "isbn": "9780439358064",
         "notes": "",
-        "path": "",
         "publish_date": "2003",
         "tags": [],
         "title": "Harry Potter and the Order of the Phoenix"
@@ -144,7 +134,6 @@
         "extra": "default",
         "isbn": "9780521198219",
         "notes": "",
-        "path": "",
         "publish_date": "2010-05-06",
         "tags": [],
         "title": "An Introduction to Mechanics"
@@ -157,7 +146,6 @@
         "extra": "default",
         "isbn": "9780545790352",
         "notes": "",
-        "path": "",
         "publish_date": "2015-10-06",
         "tags": [],
         "title": "Harry Potter and the Sorcerer's Stone"
@@ -170,7 +158,6 @@
         "extra": "default",
         "isbn": "9780575087057",
         "notes": "",
-        "path": "",
         "publish_date": "2010-04-22",
         "tags": [],
         "title": "The Name of the Wind"
@@ -184,7 +171,6 @@
         "extra": "default",
         "isbn": "9780596004651",
         "notes": "",
-        "path": "",
         "publish_date": "2003",
         "tags": [],
         "title": "Head First Java"
@@ -201,7 +187,6 @@
         "extra": "default",
         "isbn": "9780596006488",
         "notes": "",
-        "path": "",
         "publish_date": "2005",
         "tags": [],
         "title": "Learning GNU Emacs"
@@ -214,7 +199,6 @@
         "extra": "default",
         "isbn": "9780615856735",
         "notes": "",
-        "path": "",
         "publish_date": "2013-07",
         "tags": [],
         "title": "Coding the Matrix"
@@ -227,7 +211,6 @@
         "extra": "default",
         "isbn": "9780698184947",
         "notes": "",
-        "path": "",
         "publish_date": "2014-10-28",
         "tags": [],
         "title": "The Slow Regard of Silent Things"
@@ -240,7 +223,6 @@
         "extra": "default",
         "isbn": "9780755385904",
         "notes": "",
-        "path": "",
         "publish_date": "2011-05-12",
         "tags": [],
         "title": "Shibumi"
@@ -255,7 +237,6 @@
         "extra": "default",
         "isbn": "9780805390476",
         "notes": "",
-        "path": "",
         "publish_date": "1963",
         "tags": [],
         "title": "The Feynman Lectures on Physics"
@@ -269,7 +250,6 @@
         "extra": "default",
         "isbn": "9780861719068",
         "notes": "",
-        "path": "",
         "publish_date": "2011-09-06",
         "tags": [],
         "title": "Mindfulness in Plain English"
@@ -282,7 +262,6 @@
         "extra": "default",
         "isbn": "9781101158012",
         "notes": "",
-        "path": "",
         "publish_date": "2006-05-02",
         "tags": [],
         "title": "Everything Bad is Good for You"
@@ -295,7 +274,6 @@
         "extra": "default",
         "isbn": "9781101486405",
         "notes": "",
-        "path": "",
         "publish_date": "2011-03-01",
         "tags": [],
         "title": "The Wise Man's Fear"
@@ -308,7 +286,6 @@
         "extra": "default",
         "isbn": "9781118029718",
         "notes": "",
-        "path": "",
         "publish_date": "2010-11-29",
         "tags": [],
         "title": "Social Engineering"
@@ -321,7 +298,6 @@
         "extra": "default",
         "isbn": "9781250065148",
         "notes": "",
-        "path": "",
         "publish_date": "2015-10-13",
         "tags": [],
         "title": "The Laws of Cooking"
@@ -334,7 +310,6 @@
         "extra": "default",
         "isbn": "9781400881147",
         "notes": "",
-        "path": "",
         "publish_date": "2016-04-12",
         "tags": [],
         "title": "The Scientist's Guide to Writing"
@@ -349,7 +324,6 @@
         "extra": "default",
         "isbn": "9781401382216",
         "notes": "",
-        "path": "",
         "publish_date": "2004-09-01",
         "tags": [],
         "title": "The Myst Reader"
@@ -362,7 +336,6 @@
         "extra": "default",
         "isbn": "9781416556374",
         "notes": "",
-        "path": "",
         "publish_date": "2007-03-20",
         "tags": [],
         "title": "On Food and Cooking"
@@ -375,7 +348,6 @@
         "extra": "default",
         "isbn": "9781439167342",
         "notes": "",
-        "path": "",
         "publish_date": "2009-11-03",
         "tags": [],
         "title": "How To Win Friends and Influence People"
@@ -388,7 +360,6 @@
         "extra": "default",
         "isbn": "9781473211070",
         "notes": "",
-        "path": "",
         "publish_date": "2014-09-25",
         "tags": [],
         "title": "Mistborn Trilogy Boxed Set"
@@ -401,7 +372,6 @@
         "extra": "default",
         "isbn": "9781473616202",
         "notes": "",
-        "path": "",
         "publish_date": "2012-01-05",
         "tags": [],
         "title": "Get Some Headspace"
@@ -414,7 +384,6 @@
         "extra": "default",
         "isbn": "9781491946251",
         "notes": "",
-        "path": "",
         "publish_date": "2015-07-30",
         "tags": [],
         "title": "Fluent Python"
@@ -427,7 +396,6 @@
         "extra": "default",
         "isbn": "9781498702607",
         "notes": "",
-        "path": "",
         "publish_date": "2016-11-17",
         "tags": [],
         "title": "Differential Equations with Applications and Historical Notes"
@@ -440,7 +408,6 @@
         "extra": "default",
         "isbn": "9781548587543",
         "notes": "",
-        "path": "",
         "publish_date": "2017-07-05",
         "tags": [],
         "title": "C Programming"
@@ -453,7 +420,6 @@
         "extra": "default",
         "isbn": "9781561581252",
         "notes": "",
-        "path": "",
         "publish_date": "1995",
         "tags": [],
         "title": "The Complete Guide to Sharpening"
@@ -466,7 +432,6 @@
         "extra": "default",
         "isbn": "9781593272951",
         "notes": "",
-        "path": "",
         "publish_date": "2011-04-15",
         "tags": [],
         "title": "Learn You a Haskell for Great Good!"
@@ -480,7 +445,6 @@
         "extra": "default",
         "isbn": "9781598290585",
         "notes": "",
-        "path": "",
         "publish_date": "2006",
         "tags": [],
         "title": "Microcontrollers Fundamentals for Engineers and Scientists"
@@ -493,7 +457,6 @@
         "extra": "default",
         "isbn": "9781613120446",
         "notes": "",
-        "path": "",
         "publish_date": "2011-03-01",
         "tags": [],
         "title": "I'm Just Here for the Food: Version 2.0"
@@ -506,7 +469,6 @@
         "extra": "default",
         "isbn": "9781781100226",
         "notes": "",
-        "path": "",
         "publish_date": "2015-12-08",
         "tags": [],
         "title": "Harry Potter and the Chamber of Secrets"
@@ -519,7 +481,6 @@
         "extra": "default",
         "isbn": "9781781100233",
         "notes": "",
-        "path": "",
         "publish_date": "2015-12-08",
         "tags": [],
         "title": "Harry Potter and the Prisoner of Azkaban"
@@ -532,7 +493,6 @@
         "extra": "default",
         "isbn": "9781781100257",
         "notes": "",
-        "path": "",
         "publish_date": "2015-12-08",
         "tags": [],
         "title": "Harry Potter and the Half-Blood Prince"
@@ -545,7 +505,6 @@
         "extra": "default",
         "isbn": "9781781100264",
         "notes": "",
-        "path": "",
         "publish_date": "2015-12-08",
         "tags": [],
         "title": "Harry Potter and the Deathly Hallows"
@@ -558,7 +517,6 @@
         "extra": "default",
         "isbn": "9781781100523",
         "notes": "",
-        "path": "",
         "publish_date": "2015-12-08",
         "tags": [],
         "title": "Harry Potter and the Goblet of Fire"
@@ -573,7 +531,6 @@
         "extra": "default",
         "isbn": "9781781106945",
         "notes": "",
-        "path": "",
         "publish_date": "2016-07-31",
         "tags": [],
         "title": "Harry Potter and the Cursed Child \u2013 Parts One and Two (Special Rehearsal Edition)"
@@ -587,7 +544,6 @@
         "extra": "default",
         "isbn": "9781886529236",
         "notes": "",
-        "path": "",
         "publish_date": "2008",
         "tags": [],
         "title": "Introduction to Probability"
@@ -600,7 +556,6 @@
         "extra": "default",
         "isbn": "9781936493463",
         "notes": "",
-        "path": "",
         "publish_date": "2012-10-01",
         "tags": [],
         "title": "The Science of Good Cooking"
@@ -613,7 +568,6 @@
         "extra": "default",
         "isbn": "9781999579517",
         "notes": "",
-        "path": "",
         "publish_date": "2019-01-11",
         "tags": [],
         "title": "The Hundred-page Machine Learning Book"
@@ -626,7 +580,6 @@
         "extra": "default",
         "isbn": "9781316195567",
         "notes": "",
-        "path": "",
         "publish_date": "2014-10-09",
         "tags": [],
         "title": "Thinking Functionally with Haskell"

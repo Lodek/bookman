@@ -15,7 +15,6 @@ class Book:
     tags = []
     notes = ''
     aliases = []
-    path = ''
 
     @classmethod
     def inject_attributes(cls, attrs):
@@ -72,12 +71,19 @@ class Book:
 
 
 class Lib:
+
+    #TODO Decouple the API from Lib. Lib is a data layer object and should not depend
+    #on the API. Transfer API dependent methods to the service layer.
     
     def __init__(self, books_dir, books_json, api):
         self.books_dir = Path(books_dir).expanduser().absolute()
         self.books_json = Path(books_json).expanduser().absolute()
         self.api = api
         self.books = []
+
+    def get(self, isbn):
+        """Return book with matching isbn"""
+        return next(filter(lambda book: book.isbn == isbn, self.books))
         
     def get_paths(self, books):
         """Return list of path objects for book in books"""
