@@ -1,3 +1,12 @@
+# 1.4.1 - 2020-06-30
+## Added
+- Added validator for configuration file
+## Changed
+- Configurator module completely refactored
+## Fixed
+- Initial config file setup was broken, now creates the file in the right place
+
+
 # 1.4.0 - 2020-06-28
 ## Added
 - Query command

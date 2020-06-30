@@ -13,7 +13,7 @@ class ApiWrapper:
     API_VERSION = 'v1'
 
     def __init__(self, config):
-        self.service = build(self.API_NAME, self.API_VERSION, developerKey=config.api_key)
+        self.service = build(self.API_NAME, self.API_VERSION, developerKey=config['api_key'])
         self.api = self.service.volumes()
 
     def get_books(self, isbns):

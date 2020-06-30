@@ -1,47 +1,118 @@
-import importlib, os
+import importlib
+import os
+
+from pathlib import Path
+
+class ConfigDoesNotExist(RuntimeError):
+    """
+    Exception for when the specified configuration file does not exist.
+    """
+    def __init__(self, path):
+        msg = f'Error: File {path} not found'
+        super().__init__(self, msg)
+
+
+class InvalidConfig(RuntimeError):
+    """
+    Exception for when the configuration doesn't pass the validation
+    """
+    def __init__(self, violations):
+        msg = f'Error: Config did not pass validations. {violations}'
+        super().__init__(self, msg)
+
 
 class Configurator:
     """
     Class to handle configuration setup.
-    Receive a path to a python config file, create file with minal setup if 
+    Receive a path to a python config file, create file with minal setup if
     file doesn't exist, load module, override value from environments,
     override from cli arguments and store resulting property dict
     in self.config.
+    
+    validator is a function of type dict => (bool, [str]),
+    where it returns true if it's valid and a list of violation strings which is printed.
+
+    Assume env vars are prefixed with `env_prefix`
+
+    Create default configuration structure if no configuration is given.
+
+    Throw error if specified config doesn't exist, unless init is True
     """
-    def __init__(self, path, properties):
-        self.config = None
-        self.path = path
-        self.init_config_if_missing()
-        self.load_config()
-        self.override_from_environment()
-        self.override_from_cli(properties)
+    def __init__(self, config_path, default_config_path, override_properties, env_prefix,
+                 default_config_body, init=False, validator=None):
+        self.config_path = config_path
+        self.default_config_path = default_config_path
+        self.override_properties = override_properties
+        self.env_prefix = env_prefix
+        self.default_config_body = default_config_body
+        self.init = init
+        self.validator = validator 
 
-    def init_config_if_missing(self):
-        """Write minimal config if missing"""
-        txt = 'from bookman.config import *\n'
-        if not self.path.exists():
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            with self.path.open('w') as f:
-                f.write(txt)
 
-    def load_config(self):
+    def get_config(self):
+        """
+        Method attemps to load the user specified configuration file, if it fails and init is
+        false, raise ConfigDoesNotExist, else it initializes the configuration with the
+        specified defaults. If user does not provide a configuration file, load the default 
+        config and if default config does not exist, create it. After loading module,
+        override configuration dictionary with values from environment by looking for
+        environment variables whose names match the keys in the configuration dictionary 
+        prepended with `env_prefix`. Finally, override loaded config with the values set in
+        override_properties, if they existed beforehand. Return loaded configuration as a dict
+        """
+        if self.config_path:
+            config_path = Path(self.config_path)
+            is_default = False
+        else:
+            config_path = self.default_config_path
+            is_default = True
+
+        if not config_path.exists():
+            if self.init or is_default:
+                self.init_config(config_path)
+            else:
+                raise ConfigDoesNotExist(config_path)
+
+        config = self.load_config_module(config_path)
+        config = self.override_from_environment(config)
+        config = self.override_from_dict(config, self.override_properties)
+        if self.validator:
+            valid, violations = self.validator(config)
+            if not valid:
+                raise InvalidConfig(violations)
+        return config
+
+
+    def init_config(self, config_path):
+        """Initialize configuration file"""
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(config_path, 'w') as f:
+            f.write(self.default_config_body)
+
+
+    def load_config_module(self, config_path):
         """Import the given file and return object with config properties"""
-        spec = importlib.util.spec_from_file_location("config", self.path)
-        self.config = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.config)
+        spec = importlib.util.spec_from_file_location("config", config_path)
+        config = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(config)
+        return vars(config)
 
-    def override_from_environment(self):
-        """Override config values from environment variables, if they exist"""
-        items = vars(self.config)
+    def override_from_environment(self, config):
+        """Attempt to update `config` with values from environment.
+        Look for environment variables whose names are the same as the keys in `config`
+        prefixed by `self.env_prefix`."""
+        items = dict(**config)
         for key in items:
             try:
-                items[key] = os.environ[key]
+                name = f'{self.env_prefix}{key}'
+                items[key] = os.environ[name]
             except KeyError:
                 pass
-        
-    def override_from_cli(self, properties):
-        """Override config values from cli arguments"""
-        items = vars(self.config)
+        return items
+
+    def override_from_dict(self, config, properties):
+        """Update config with items in properties, if they exist"""
+        items = dict(**config)
         for key, value in properties.items():
             items[key] = value
- 
+        return items

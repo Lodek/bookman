@@ -14,5 +14,3 @@ Since bookman doesn't store file paths, it recursively searches the configured d
 Bookman leverages the Google Books API.
 Books can be added directly through their ISBN or through a custom search string.
 Information is stored in a JSON file.
-
-

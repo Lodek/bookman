@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lodek-bookman"
-version = "1.4.0"
+version = "1.4.1"
 description = "Small CLI tool to manage a local library."
 authors = ["Bruno Gomes <lodek@protonmail.com>"]
 readme = "Readme.md"

@@ -24,20 +24,36 @@ class ProxyController(ControllerABC):
     def command_name(self):
         return 'bookman'
 
+    @staticmethod
+    def validator(config):
+        if not config['api_key'] or not config['api_key_file']:
+            return (False, ['Must specify either api key or api key file'])
+        else:
+            return (True, [])
+
     def _controller(self, args):
         """Parse command line arguments, initialize and load Lib, route
         command to Command class"""
-        config_file = Path(self._determine_config(args.config))
+        try:
+            config_path = os.environ[props.config_env_var_name]
+        except KeyError:
+            config_path = ''
+        config_path = args.config if args.config else config_path
         cli_properties = self._parse_cli_properties(args.p)
-        configurator = Configurator(config_file, cli_properties)
-        config = configurator.config
-        if config.api_key_file:
-            with open(config.api_key_file) as f:
-                key = f.read().strip('\n')
-                config.api_key = key
+        configurator = Configurator(config_path, props.default_config_path, cli_properties,
+                                    props.env_var_prefix, props.default_config_body,
+                                    validator=self.validator)
+        config = configurator.get_config()
+        if config['api_key_file']:
+            try:
+                with open(config['api_key_file']) as f:
+                    key = f.read().strip('\n')
+                    config['api_key'] = key
+            except FileNotFoundError:
+                exit(f"Error: Cant find api file {config['api_key_file']}")
         wrapper = ApiWrapper(config)
-        Book.inject_attributes(config.extra_attrs)
-        lib = Lib(api=wrapper, books_json=config.books_json, books_dir=config.books_dir)
+        Book.inject_attributes(config['extra_attrs'])
+        lib = Lib(api=wrapper, books_json=config['books_json'], books_dir=config['books_dir'])
         lib.load()
         self._proxy(lib, args.command, args.args)
 
@@ -60,18 +76,6 @@ class ProxyController(ControllerABC):
             raise RuntimeError('\n'.join(error_msgs))
         return {match.group(1): match.group(2) for _, match in matches}
 
-    def _determine_config(self, cli_value):
-        """Determine which configuration file to use based on the following order of precedence
-        default -> environment -> cli argument.
-        Return path to the config file that won."""
-        choices = []
-        choices.append(props.default_config)
-        try:
-            choices.append(os.environ[props.config_env_var_name])
-        except KeyError:
-            choices.append('')
-        choices.append(cli_value)
-        return next(filter(None, reversed(choices)))
 
     def parser_config(self):
         self.parser.add_argument('command', choices=self.choices)
