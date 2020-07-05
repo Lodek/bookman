@@ -1,4 +1,16 @@
-# 1.4.1 - 2020-06-30
+# 0.5.0 - 2020-07-05
+## Added
+- Search commands
+- Search tests
+
+# 0.4.2 - 2020-07-04
+## Fixed
+- Fixed validator error
+## Added
+- Added basic logging
+- version command
+
+# 0.4.1 - 2020-06-30
 ## Added
 - Added validator for configuration file
 ## Changed
@@ -7,7 +19,7 @@
 - Initial config file setup was broken, now creates the file in the right place
 
 
-# 1.4.0 - 2020-06-28
+# 0.4.0 - 2020-06-28
 ## Added
 - Query command
 - Add from file command
@@ -17,17 +29,17 @@
 ## Changed
 - Open command now recurssively search a direectory for files that contains, in their name, the isbn of one of the books that match the given query criteria
 
-# 1.3.0 - 2020-06-21
+# 0.3.0 - 2020-06-21
 ## Added
 - Path attribute to book model
 
-# 1.2.0 - 2020-06-20
+# 0.2.0 - 2020-06-20
 ## Added
 - extra_attrs configuration directive: user can not choose custom attributes for model
 ## Fixed
 - fixed broken test
 
-# 1.1.0 - 2020-06-20
+# 0.1.0 - 2020-06-20
 ## Added
 - api_key_file configuration directive
 - migration command

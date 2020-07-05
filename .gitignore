@@ -2,3 +2,6 @@
 .secrets
 *.egg*
 .venv
+dist
+*.log
+test-files/api_key

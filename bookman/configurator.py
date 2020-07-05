@@ -1,7 +1,13 @@
+"""
+Module for handling the python configuration loading process.
+"""
 import importlib
+import logging
 import os
 
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 class ConfigDoesNotExist(RuntimeError):
     """
@@ -67,19 +73,26 @@ class Configurator:
             config_path = self.default_config_path
             is_default = True
 
+        logger.info(f'Using config_path={config_path}')
+
         if not config_path.exists():
             if self.init or is_default:
                 self.init_config(config_path)
             else:
+                logger.error('Config not found')
                 raise ConfigDoesNotExist(config_path)
 
         config = self.load_config_module(config_path)
         config = self.override_from_environment(config)
         config = self.override_from_dict(config, self.override_properties)
+        logger.info('Value override finished')
         if self.validator:
             valid, violations = self.validator(config)
             if not valid:
-                raise InvalidConfig(violations)
+                e = InvalidConfig(violations)
+                logger.exception('Validation failed', e)
+                raise e
+        logger.info('Config loaded config={config}')
         return config
 
 
@@ -87,7 +100,8 @@ class Configurator:
         """Initialize configuration file"""
         config_path.parent.mkdir(parents=True, exist_ok=True)
         with open(config_path, 'w') as f:
-            f.write(self.default_config_body)
+           f.write(self.default_config_body)
+        logging.info('Initialized config at {config_path}')
 
 
     def load_config_module(self, config_path):
@@ -95,7 +109,10 @@ class Configurator:
         spec = importlib.util.spec_from_file_location("config", config_path)
         config = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(config)
-        return vars(config)
+        config = vars(config)
+        config = {key: value for key, value in config.items() if key not in globals()}
+        logger.debug(f'Config module loaded. config={config}')
+        return config
 
     def override_from_environment(self, config):
         """Attempt to update `config` with values from environment.
@@ -105,14 +122,19 @@ class Configurator:
         for key in items:
             try:
                 name = f'{self.env_prefix}{key}'
-                items[key] = os.environ[name]
+                value = os.environ[name]
+                items[key] = value
+                logger.debug(f'Config value override from env, {name}={value}')
             except KeyError:
                 pass
+        logger.debug(f'Environment override finished config={items}')
         return items
 
     def override_from_dict(self, config, properties):
         """Update config with items in properties, if they exist"""
+        logger.debug(f'Merging config with values from prop={properties}')
         items = dict(**config)
         for key, value in properties.items():
             items[key] = value
+        logger.debug(f'Config merge result {config}')
         return items

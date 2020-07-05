@@ -26,10 +26,10 @@ class ProxyController(ControllerABC):
 
     @staticmethod
     def validator(config):
-        if not config['api_key'] or not config['api_key_file']:
-            return (False, ['Must specify either api key or api key file'])
-        else:
+        if config['api_key'] or config['api_key_file']:
             return (True, [])
+        else:
+            return (False, ['Must specify either api key or api key file'])
 
     def _controller(self, args):
         """Parse command line arguments, initialize and load Lib, route
@@ -45,8 +45,9 @@ class ProxyController(ControllerABC):
                                     validator=self.validator)
         config = configurator.get_config()
         if config['api_key_file']:
+            path = Path(config['api_key_file']).expanduser().absolute()
             try:
-                with open(config['api_key_file']) as f:
+                with path.open() as f:
                     key = f.read().strip('\n')
                     config['api_key'] = key
             except FileNotFoundError:
@@ -84,4 +85,3 @@ class ProxyController(ControllerABC):
                                  help='bookman config file')
         self.parser.add_argument('-p', required=False, default=[], action='append',
                                  help='Sets a property in the format key=value. Will override value in user defined config')
-

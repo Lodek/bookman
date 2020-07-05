@@ -2,6 +2,7 @@
 Module contains Controller definitions for bookman commands.
 """
 from pathlib import Path
+from importlib import metadata
 import subprocess
 import inspect
 import shutil
@@ -10,6 +11,20 @@ import re
 
 from bookman.controller.abc import ControllerABC
 import bookman.service as service
+
+class Version(ControllerABC):
+    """Prints version and exit"""
+
+    @property
+    def command_name(self):
+        return 'version'
+
+    def parser_config(self):
+        pass
+
+    def _controller(self, args):
+        print(metadata.version('bookman'))
+
 
 class List(ControllerABC):
     """Lists all books in the library"""
@@ -36,15 +51,18 @@ class Search(ControllerABC):
 
     def parser_config(self):
         self.parser.add_argument('pattern')
-        self.parser.add_argument('-q', '--quiet', action='store_true',
+        self.parser.add_argument('-k', '--keyword', action='append', default=[],
+                                 dest='keywords',
+                                 help='Model attribute to look up for exact value. Specify filter in the format attribute=value')
+        self.parser.add_argument('-q', '--quiet', action='store_true', default=False,
                                  help='Quiet mode, prints only the ISBN')
 
     def _controller(self, args):
-        books = self.lib.search(args.pattern)
+        keywords = service.parse_string_properties(args.keywords)
+        books = service.SearchService().search(self.lib, args.pattern, **keywords)
         for book in books:
             s = book.isbn if args.quiet else str(book)
             print(s)
-
 
 
 class Add(ControllerABC):
@@ -108,9 +126,13 @@ class Open(ControllerABC):
 
     def parser_config(self):
         self.parser.add_argument('pattern')
+        self.parser.add_argument('-k', '--keyword', action='append', default=[],
+                                 dest='keywords',
+                                 help='Model attribute to look up for exact value. Specify filter in the format attribute=value')
 
     def _controller(self, args):
-        books = self.lib.search(args.pattern)
+        keywords = service.parse_string_properties(args.keywords)
+        books = service.SearchService().search(self.lib, args.pattern, **keywords)
         paths = service.find_books_in_dir(self.lib.books_dir, books)
         for path in paths:
             subprocess.Popen(['xdg-open', str(path)], start_new_session=True)
@@ -234,6 +256,8 @@ class AddFile(ControllerABC):
         target = self.lib.books_dir / target_name
         
         shutil_command(args.file, target)
+
+
 
 
 def get_commands(module_dict):
