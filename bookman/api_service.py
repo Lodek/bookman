@@ -1,14 +1,14 @@
 """
 Google Books API Service module
 """
+from bookman import settings
+
 from googleapiclient.discovery import build
+
 
 # FIXME Api factory shouldn't be here
 def api_factory(api_key):
-    # FIXME this should be in a constants file, or be a module constant
-    API_NAME = 'books'
-    API_VERSION = 'v1'
-    service = build(API_NAME, API_VERSION, api_key)
+    service = build(settings.API_NAME, settings.API_VERSION, developerKey=api_key)
     return service.volumes()
 
 
@@ -49,7 +49,7 @@ class GBooksService:
 
 
 # FIXME this shouldn't be here dawg
-class GBooksResponseAdaptor
+class GBooksResponseAdaptor:
 
     from bookman.model import Book
 
