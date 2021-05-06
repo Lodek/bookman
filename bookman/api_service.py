@@ -46,22 +46,3 @@ class GBooksService:
         assignment_token = ':'
         return join_token.join([f'{key}{assignment_token}{value}'
                                 for key, value in kwargs.items()])
-
-
-# FIXME this shouldn't be here dawg
-class GBooksResponseAdaptor:
-
-    from bookman.model import Book
-
-    def book_from_item(self, item):
-        """item is a dict matching an item json retrieved from the api.
-        Method process the JSON and return Book object.
-        If book has no ISBN we doomed, or are we?"""
-        volume_info = item['volumeInfo']
-        title = volume_info.get('title', 'untitled')
-        authors = volume_info.get('authors', ['unknown'])
-        publish_date = volume_info.get('publishedDate', '1969-06-09')
-        identifiers = list(filter(lambda id: 'ISBN' in id['type'], volume_info['industryIdentifiers']))
-        isbn = identifiers[0].get('identifier', '0') if identifiers else '0'
-        book = Book(authors=authors, title=title, isbn=isbn, publish_date=publish_date)
-        return book
