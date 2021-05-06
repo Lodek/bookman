@@ -1,40 +1,69 @@
 """
 Domain functions for bookman
 """
-from .models import Book
+from datetime import date
+
+from .api_serive import GBooksService
+
 
 # FIXME Use proper typehints
 
-def item_to_book(item):
-    # type: (dict) -> Book
-    """
-    Converter for `item` entity in Google Books' API response to
-    Book model
-    """
-    pass
+class Book:
+    authors = []
+    title = ''
+    isbn = ''
+    year = ''
+    tags = []
 
-def books_from_response(response):
-    # type: (dict) -> list(Book)
-    """
-    Convert reponse from API into list of `Book` entities
-    """
-    pass
+    @classmethod
+    def from_item(cls, item):
+        """
+        Converter for `item` entity in Google Books' API response to
+        Book model
+        """
+        # type: dict -> Book
+        isbn_getter = lambda ids: ['0']
+            .extend(map(lambda id: id.identifier, filter(lambda id: 'ISBN' in id['type'])))
+            .pop()
+        obj = cls()
+        info = item['volumeInfo']
+        obj.authors = info.get('authors', 'untitled')
+        obj.title = info.get('title', ['unknown'])
+        obj.isbn = isbn_getter(info['industryIdentifiers'])
+        date = info.get('publishedDate', '9999-01-01') 
+        obj.year = date.fromisoformat(date).year
+        return obj
 
-def get_book_from_isbn(isbn):
-    # type: str -> Book
-    """Fetches `Book` from API using ISBN"""
-    pass
+    def to_filename(self):
+        # type: Book -> str
+        """Build Book based on the stringified format used by bookman"""
+        pass
 
-def get_books_from_query(query):
-    # type: str -> list(Book)
-    """
-    Return list of `Book` for each returned value fetched from the API
-    """
-    pass
 
-def deserialize_book(filename):
-    # type: str -> Book
+class Domain:
     """
-    Build Book based on the stringified format used by bookman
+    Namespace with domain functions and instance of service to be used
     """
-    pass
+    def __init__(self, service):
+        self.service = service
+
+    def get_books_from_query(self, query):
+        # type: str -> list(Book)
+        """
+        Return list of `Book` for each returned value fetched from the API
+        """
+        results = self.service.query(query)
+        return self.books_from_response(results)
+
+    def books_from_response(response):
+        # type: (dict) -> list(Book)
+        """
+        Convert reponse from API into list of `Book` entities
+        """
+        return [Book.from_item(item) for item in response['items']]
+
+    def get_book_from_isbn(isbn):
+        # type: str -> Book
+        """Fetches `Book` from API using ISBN"""
+        results = self.service.query('', isbn=isbn)
+        return self.books_from_response(results)[0]
