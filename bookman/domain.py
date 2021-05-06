@@ -3,7 +3,7 @@ Domain functions for bookman
 """
 from datetime import date
 
-from .api_serive import GBooksService
+from .api_service import GBooksService
 
 
 # FIXME Use proper typehints
@@ -15,6 +15,13 @@ class Book:
     year = ''
     tags = []
 
+
+    @classmethod
+    def isbn_getter(cls, identifiers):
+        filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
+        mapped = map(lambda id: id['identifier'], filtered)
+        return (['0'] + list(mapped)).pop()
+
     @classmethod
     def from_item(cls, item):
         """
@@ -22,16 +29,13 @@ class Book:
         Book model
         """
         # type: dict -> Book
-        isbn_getter = lambda ids: ['0']
-            .extend(map(lambda id: id.identifier, filter(lambda id: 'ISBN' in id['type'])))
-            .pop()
         obj = cls()
         info = item['volumeInfo']
         obj.authors = info.get('authors', 'untitled')
         obj.title = info.get('title', ['unknown'])
-        obj.isbn = isbn_getter(info['industryIdentifiers'])
-        date = info.get('publishedDate', '9999-01-01') 
-        obj.year = date.fromisoformat(date).year
+        obj.isbn = cls.isbn_getter(info['industryIdentifiers'])
+        date_str = info.get('publishedDate', '9999-01-01') 
+        obj.year = date.fromisoformat(date_str).year
         return obj
 
     def to_filename(self):
