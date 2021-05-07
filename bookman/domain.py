@@ -2,9 +2,9 @@
 Domain functions for bookman
 """
 from datetime import date
+import re
 
 from .api_service import GBooksService
-
 
 # FIXME Use proper typehints
 
@@ -15,12 +15,17 @@ class Book:
     year = ''
     tags = []
 
+    matcher = re.compile(r'(\d{4})(-\d{2}-\d{2})?')
 
     @classmethod
     def isbn_getter(cls, identifiers):
         filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
         mapped = map(lambda id: id['identifier'], filtered)
-        return (['0'] + list(mapped)).pop()
+        return (['_'] + list(mapped)).pop()
+
+    @classmethod
+    def get_year(cls, date_str):
+        return cls.matcher.search(date_str).groups(1)
 
     @classmethod
     def from_item(cls, item):
@@ -33,9 +38,12 @@ class Book:
         info = item['volumeInfo']
         obj.title = info.get('title', 'untitled')
         obj.authors = info.get('authors', ['unknown'])
-        obj.isbn = cls.isbn_getter(info['industryIdentifiers'])
+        if 'industryIdentifiers' in info:
+            obj.isbn = cls.isbn_getter(info['industryIdentifiers'])
+        else:
+            obj.isbn = '_'
         date_str = info.get('publishedDate', '9999-01-01') 
-        obj.year = date.fromisoformat(date_str).year
+        obj.year = cls.get_year(date_str)
         return obj
 
     def to_filename(self):
@@ -43,6 +51,14 @@ class Book:
         """Build Book based on the stringified format used by bookman"""
         pass
 
+    def __str__(self):
+        return self.title
+
+class Parser:
+    """
+    Parser for bookman file string
+    """
+    pass
 
 class Domain:
     """
@@ -59,14 +75,14 @@ class Domain:
         results = self.service.query(query)
         return self.books_from_response(results)
 
-    def books_from_response(response):
+    def books_from_response(self, response):
         # type: (dict) -> list(Book)
         """
         Convert reponse from API into list of `Book` entities
         """
         return [Book.from_item(item) for item in response['items']]
 
-    def get_book_from_isbn(isbn):
+    def get_book_from_isbn(self, isbn):
         # type: str -> Book
         """Fetches `Book` from API using ISBN"""
         results = self.service.query('', isbn=isbn)
