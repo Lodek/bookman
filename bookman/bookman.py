@@ -3,8 +3,8 @@ import sys
 import argparse
 
 from .handlers import Handler
-from .api_service import GBooksService, api_factory
-from .domain import Domain
+from .services import GBooksService, api_factory
+from .domains import Domain
 from bookman import settings
 
 
