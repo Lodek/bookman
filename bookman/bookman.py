@@ -2,6 +2,7 @@ from bookman.controller.proxy_controller import ProxyController
 import logging
 import sys
 
+# TODO Specify grammar for bookman's book format
 
 def setup_logging():
     logfmt = '%(asctime)s %(name)s %(funcName)s %(levelname)s - %(message)s'

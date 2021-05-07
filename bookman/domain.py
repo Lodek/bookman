@@ -31,8 +31,8 @@ class Book:
         # type: dict -> Book
         obj = cls()
         info = item['volumeInfo']
-        obj.authors = info.get('authors', 'untitled')
-        obj.title = info.get('title', ['unknown'])
+        obj.title = info.get('title', 'untitled')
+        obj.authors = info.get('authors', ['unknown'])
         obj.isbn = cls.isbn_getter(info['industryIdentifiers'])
         date_str = info.get('publishedDate', '9999-01-01') 
         obj.year = date.fromisoformat(date_str).year
