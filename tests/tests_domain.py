@@ -55,4 +55,3 @@ class BookTest(TestCase):
         self.assertEquals(book.authors, ["unknown"])
         self.assertEquals(book.year, 9999)
         self.assertEquals(book.isbn, "0")
-
