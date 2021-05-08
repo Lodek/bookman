@@ -2,6 +2,8 @@ import subprocess, sys
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from .utils import pascal_to_kebab
+
 
 def prompt(lines):
     # type: list(str) -> str
@@ -93,5 +95,8 @@ class Update(Controller):
 
 
 def get_controllers():
-    return  [value for value in globals().values() 
-             if hasattr(value, "__mro__") and Controller in value.__mro__]
+    def predicate(value):
+         return isinstance(value, type) and Controller in value.__mro__ and not value is Controller
+
+    return  {pascal_to_kebab(value.__name__): value()
+             for value in globals().values() if predicate(value)}
