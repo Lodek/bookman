@@ -4,14 +4,8 @@ import argparse
 
 from .services import GBooksService, api_factory
 from .domains import Domain
-from .controllers import *
+from .controllers import get_controllers, Controller
 from bookman import settings
-
-
-handler_map = {
-    "fetch": "",
-    "update": "",
-}
 
 
 def setup_logging():
@@ -26,18 +20,14 @@ def setup_logging():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-
-def build_parser():
+def build_parser(controller_map):
     parser = argparse.ArgumentParser("Bookman")
-    subparsers = parser.add_subparsers(dest="subcommand_name", required=True)
-
-    controllers = get_controllers()
-    for controller in controllers:
-        subparsers.add_parser(controller.__name__,
-                              help=controller.__doc__)
+    subparsers = parser.add_subparsers(dest="subcommand_name",
+                                       required=True)
+    for command, controller in controller_map.items():
+        subparser = subparsers.add_parser(command, help=controller.__doc__)
+        controller.add_args(subparser)
     return parser
-
-
 
 def main():
     api = api_factory(settings.API_KEY)
@@ -45,12 +35,15 @@ def main():
     domain = Domain(service)
     Controller.domain = domain
 
-    parser = build_parser()
+    controller_map = get_controllers()
+
+    parser = build_parser(controller_map)
     args = parser.parse_args()
 
-    #handler_function = handler_map[args.__dict__.pop("subcommand_name")]
-
-    #handler_function(handler, **args.__dict__)
+    # FIXME This is so verbose. Yucky!
+    command_name = args.__dict__.pop("subcommand_name")
+    controller = controller_map[command_name]
+    controller.run(**args.__dict__)
 
 
 if __name__ == '__main__':
