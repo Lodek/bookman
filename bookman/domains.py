@@ -1,10 +1,10 @@
 """
 Domain functions for bookman
 """
-import functools
 import re
 
 from .models import Book
+from .utils import compose
 
 
 class Parser:
@@ -55,32 +55,29 @@ class Domain:
         book.title = self.clean_title(info)
         book.authors = self.clean_authors(info)
         book.isbn = self.isbn_getter(info)
-        date_str = self.get_year(info)
-        book.year = get_year(date_str)
-        return obj
+        book.year = self.get_year(info)
+        return book
 
     def get_year(self, info):
         """Return year for book from info in API
-
-        The `publishedDate` field from the API doesn't have a fixed 
-        format. Some items only have a year, others have an ISO date.
-        This func uses a regex to fetch only the year
         """
+        # The `publishedDate` field from the API doesn't have a fixed 
+        # format. Some items only have a year, others have an ISO date.
+        # So we use a regex to fetch only the year
         date_str = info.get('publishedDate', '9999-01-01') 
-        return self.matcher.search(date_str).groups(1)
+        return self.matcher.search(date_str).group(1)
 
     def clean_title(self, info):
         # type: dict -> str
-        """This beauty of a function handles recovering the title from
-        the `info` dict. The cleaned title should be formatted such that
-        words start with a capital, there aren't any weird special
-        characters and words are joined by '-'.
         """
-        char_remover = lambda s: [c for c in s 
-                                  if c not in "._-|\"`&~*"]
-        space_trimmer = lambda s: re.sub(r" +", " ", s)
-        funcs = [char_remover, space_trimmer, str.title,
-                 str.trim, str.split, lambda xs: "-".join(xs)]
+        Return book title such that each word starts with a capital
+        """
+        formatter = compose([
+            lambda s: "".join([c for c in s if c not in "._-|\"`&~*,:"]),
+            lambda s: re.sub(r" +", " ", s),
+            str.title,
+            str.strip
+        ])
 
         title = info.get('title', 'Untitled')
         # The API sometimes returns this subtitle business
@@ -88,12 +85,22 @@ class Domain:
         subtitle = info.get('subtitle', '')
         title = title + " " + subtitle
 
-        return functools.reduce(lambda acc, f: f(acc), funcs, title)
+        return formatter(title)
 
     def clean_authors(self, info):
         # type: dict -> list(str)
-        # TODO impl this
-        return info.get('authors', ['unknown'])
+        """
+        Performs some preprocessing over the authors to format
+        them in a regular way.
+        """
+        author_processor = compose([
+            lambda s: re.sub(r"\.|,|\&", " ", s),
+            lambda s: re.sub(r" +", " ", s),
+            str.title,
+        ])
+
+        authors = info.get("authors", ["Unknown"])
+        return list(map(author_processor, authors))
         
     def isbn_getter(self, info):
         # type: dict -> str
@@ -103,7 +110,7 @@ class Domain:
         # Some items in Google books don't have the `industryIdentifiers`
         # field, so we add a default
         identifiers = info.get("industryIdentifiers", [])
-        idenifiers.append({"ISBN_default": "-"})
+        identifiers.append({"identifier": "ISBN_default", "type": "-"})
 
         filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
         mapped = map(lambda id: id['identifier'], filtered)

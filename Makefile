@@ -1,4 +1,7 @@
-.PHONY: test
+.PHONY: test source
 
-test:
+test: source
 	python -m unittest tests
+
+source:
+	source .secrets
