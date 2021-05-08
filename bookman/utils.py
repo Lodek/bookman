@@ -13,3 +13,8 @@ def compose(fs):
             result = f(result)
         return result
     return composition
+
+def pascal_to_kebab(string):
+    mapper = lambda char: char if char.islower() else "-" + char
+    kebabed = reduce(lambda acc, char: acc + mapper(char), string)
+    return kebabed.lower().strip('-')
