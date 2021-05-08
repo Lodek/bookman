@@ -6,9 +6,10 @@ def compose(fs):
     It's up to the user to ensure these functions can be chained.
     """
     def composition(*args, **kwargs):
-        f = fs.pop(0)
+        funcs = list(fs)
+        f = funcs.pop(0)
         result = f(*args, **kwargs)
-        for f in fs:
+        for f in funcs:
             result = f(result)
         return result
     return composition
