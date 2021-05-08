@@ -91,7 +91,7 @@ class Update(Controller):
         result = prompt(list(map(str, books)))
         file = Path(filename)
         target = file.parent / (result + file.suffix)
-        print(target)
+        file.rename(target)
 
 
 def get_controllers():
