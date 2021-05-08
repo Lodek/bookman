@@ -2,9 +2,23 @@
 Domain functions for bookman
 """
 import re
+from pathlib import Path
+from functools import reduce
 
 from .models import Book
 from .utils import compose
+
+condense_space = lambda s: re.sub(r" +", " ", s)
+
+def pascal_to_space(name):
+    # type: str -> str
+    """
+    Transforms a PascalCase string into space separated
+    eg. FooBar -> Foo Bar
+    """
+    space_prepend = lambda c: c if c.islower() else " " + c
+    name = reduce(lambda acc, c: acc + space_prepend(c), name, "")
+    return name.strip()
 
 
 class Parser:
@@ -115,3 +129,12 @@ class Domain:
         filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
         mapped = map(lambda id: id['identifier'], filtered)
         return max(mapped)
+
+    def clean_filename(self, filename):
+        path = Path(filename)
+        file = path.stem
+        char_transform = lambda c: c if c not in "_-&.,()[]" else " "
+        f = compose((
+            lambda s: "".join(list(map(char_transform, s))),
+            pascal_to_space, condense_space, str.lower))
+        return f(file)

@@ -9,7 +9,7 @@ from bookman import settings
 
 
 handler_map = {
-    "find": Handler.get_formatted_name,
+    "fetch": Handler.get_formatted_name,
         
 }
 
@@ -31,8 +31,10 @@ def build_parser():
     parser = argparse.ArgumentParser("Bookman")
     subparsers = parser.add_subparsers(dest="subcommand_name", required=True)
 
-    filename_command = subparsers.add_parser("find", help="Queries API for a book and returns a bookman formatted string for the book")
+    filename_command = subparsers.add_parser("fetch", help="Queries API for a book and returns a bookman formatted string for the book")
     filename_command.add_argument("query", help="Query to use while searching book")
+    filename_command.add_argument("-f", "--file", help="Indicates whether the query is a filename. Filenames are pre-processed to improve results",
+            action="store_true", default=False, required=False)
 
     return parser
 
