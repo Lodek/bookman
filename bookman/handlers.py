@@ -1,12 +1,16 @@
+import sys
 import subprocess
 
 def prompt(lines):
     # type: list(str) -> str
     """Receives a list of strings and pass to fzf for prompting"""
-    # well crap. I need to exec this. how do?
-    fzf_input = "\n".join(str(lines))
-    result = subprocess.run("fzf", input=fzf_input, capture_output=True, text=True)
-    return result.stdout
+    line = "\n".join(lines)
+    fzf_input = bytes(line, "utf-8")
+    # This is a beauty. FZF uses stderr as the TUI fd, so passing
+    # the bookman's stderr means I can spawn fzf, interact with it and 
+    # get its result.
+    result = subprocess.run("fzf", input=fzf_input, stdout=subprocess.PIPE, stderr=sys.stderr)
+    return result.stdout.decode("utf-8").strip("\n")
 
 
 class Handler:
@@ -19,5 +23,9 @@ class Handler:
         """ """
         query = self.domain.clean_filename(query) if file else query
         books = self.domain.get_books_from_query(query)
-        for book in books:
-            print(str(book))
+        result = prompt(list(map(str, books)))
+        print(result)
+
+    def open(self):
+        pass
+
