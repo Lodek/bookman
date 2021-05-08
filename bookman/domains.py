@@ -110,7 +110,7 @@ class Domain:
         # Some items in Google books don't have the `industryIdentifiers`
         # field, so we add a default
         identifiers = info.get("industryIdentifiers", [])
-        identifiers.append({"identifier": "ISBN_default", "type": "-"})
+        identifiers.append({"type": "ISBN_default", "identifier": "-"})
 
         filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
         mapped = map(lambda id: id['identifier'], filtered)
