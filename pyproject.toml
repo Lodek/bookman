@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "lodek-bookman"
-version = "0.5.0"
+version = "0.1.0"
 description = "Small CLI tool to manage a local library."
 authors = ["Bruno Gomes <lodek@protonmail.com>"]
-readme = "Readme.md"
-homepage = "https://gitlab.com/Lodek/bookman"
-repository = "https://gitlab.com/Lodek/bookman"
+readme = "README.md"
+homepage = "https://github.com/Lodek/bookman"
+repository = "https://github.com/Lodek/bookman"
 packages = [
     { include = "bookman"},
 ]
