@@ -10,7 +10,7 @@ from bookman import settings
 
 handler_map = {
     "fetch": Handler.get_formatted_name,
-        
+    "update": Handler.update_filename,
 }
 
 
@@ -35,6 +35,12 @@ def build_parser():
     filename_command.add_argument("query", help="Query to use while searching book")
     filename_command.add_argument("-f", "--file", help="Indicates whether the query is a filename. Filenames are pre-processed to improve results",
             action="store_true", default=False, required=False)
+
+    update_filename = subparsers.add_parser("update", 
+            help="Rename a book file to follow bookman's name format. Use filename as query, or a user specified query")
+    update_filename.add_argument("filename", help="File which will be renamed")
+    update_filename.add_argument("--query", "-q", required=False, default="",
+            help="User defined string to use as query")
 
     return parser
 

@@ -1,5 +1,6 @@
 import sys
 import subprocess
+from pathlib import Path
 
 def prompt(lines):
     # type: list(str) -> str
@@ -26,6 +27,15 @@ class Handler:
         result = prompt(list(map(str, books)))
         print(result)
 
+    def update_filename(self, filename, query=""):
+        query = self.domain.clean_filename(filename) if not query else query
+        books = self.domain.get_books_from_query(query)
+        result = prompt(list(map(str, books)))
+        file = Path(filename)
+        target = file.parent / (result + file.suffix)
+        print(target)
+
+
+
     def open(self):
         pass
-
