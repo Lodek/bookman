@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from .utils import pascal_to_kebab
+from bookman import settings
 
 
 def prompt(lines):
@@ -90,8 +91,24 @@ class Update(Controller):
         # I feel like this method adds too much custom logic
         result = prompt(list(map(str, books)))
         file = Path(filename)
-        target = file.parent / (result + file.suffix)
+        bookman_dir = Path(settings.DIR).expanduser().resolve()
+        target = bookman_dir / (result + file.suffix)
         file.rename(target)
+
+
+class Open(Controller):
+    """
+    Lists all books in bookman dir, prompts user using fzf and opens it
+    """
+    def add_args(self, parser):
+        pass
+
+    def run(self):
+        bookman_dir = Path(settings.DIR).expanduser().resolve()
+        books_map = {path.name: path for path in bookman_dir.iterdir()}
+        chosen_one = prompt(books_map.keys())
+        chosen_path = books_map[chosen_one]
+        subprocess.run(f"xdg-open {chosen_path}".split())
 
 
 def get_controllers():
