@@ -30,7 +30,9 @@ class Controller(ABC):
     match the args added to the parser
     """
 
-    domain = None
+    api_domain = None
+    file_system_domain = None
+    parser = None
 
     @abstractmethod
     def run(self, *args, **kwargs):
@@ -65,8 +67,8 @@ class Fetch(Controller):
             action="store_true", default=False, required=False)
 
     def run(self, query, file=False):
-        query = self.domain.clean_filename(query) if file else query
-        books = self.domain.get_books_from_query(query)
+        query = self.file_system_domain.filename_from_path(file) if file else query
+        books = self.api_domain.get_books_from_query(query)
         result = prompt(list(map(str, books)))
         print(result)
 
@@ -86,12 +88,12 @@ class Update(Controller):
 
 
     def run(self, filename, query=""):
-        query = self.domain.clean_filename(filename) if not query else query
-        books = self.domain.get_books_from_query(query)
-        # I feel like this method adds too much custom logic
+        query = self.file_system_domain.filename_from_path(file) if not query else query
+        books = self.api_domain.get_books_from_query(query)
         result = prompt(list(map(str, books)))
+        # I feel like this method adds too much custom logic
         file = Path(filename)
-        bookman_dir = Path(settings.DIR).expanduser().resolve()
+        bookman_dir = self.file_system_domain.get_bookman_path()
         target = bookman_dir / (result + file.suffix)
         file.rename(target)
 
