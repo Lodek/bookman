@@ -7,6 +7,7 @@ from functools import reduce
 
 from .models import Book
 from .utils import compose
+from bookman import settings
 
 condense_space = lambda s: re.sub(r" +", " ", s)
 
@@ -23,14 +24,14 @@ def pascal_to_space(name):
 
 class Parser:
     """
-    Parser for bookman file string
+    Logic related to deseralizing bookman's format into model instances
     """
     pass
 
 
-class Domain:
+class ApiDomain:
     """
-    Namespace with domain functions and instance of service to be used
+    Logic mapping API to model domain
     """
 
     def __init__(self, service):
@@ -42,6 +43,7 @@ class Domain:
         """
         Return list of `Book` for each returned value fetched from the API
         """
+        query = self._clean_query(query)
         results = self.service.query(query)
         return self.books_from_response(results)
 
@@ -84,7 +86,9 @@ class Domain:
     def clean_title(self, info):
         # type: dict -> str
         """
-        Return book title such that each word starts with a capital
+        Return book title such that each word starts with a capital.
+        Also strips symbols from title
+        eg: Sample title & another info -> Sample Title Another Info
         """
         formatter = compose([
             lambda s: "".join([c for c in s if c not in "._-|\"`&~*,:"]),
@@ -106,6 +110,9 @@ class Domain:
         """
         Performs some preprocessing over the authors to format
         them in a regular way.
+        Removes preios and other symbols from author name.
+        Return list of strings, author name and surname is space 
+        separated
         """
         author_processor = compose([
             lambda s: re.sub(r"\.|,|\&", " ", s),
@@ -119,22 +126,42 @@ class Domain:
     def isbn_getter(self, info):
         # type: dict -> str
         """
-        Fetches ISBN from item, returns "-" if none is found
+        Fetches ISBN from item, returns "" if none is found
         """
         # Some items in Google books don't have the `industryIdentifiers`
         # field, so we add a default
         identifiers = info.get("industryIdentifiers", [])
-        identifiers.append({"type": "ISBN_default", "identifier": "-"})
+        identifiers.append({"type": "ISBN_default", "identifier": ""})
 
         filtered = filter(lambda id: 'ISBN' in id['type'], identifiers)
         mapped = map(lambda id: id['identifier'], filtered)
         return max(mapped)
 
-    def clean_filename(self, filename):
-        path = Path(filename)
-        file = path.stem
+    def _clean_query(self, query):
+        """
+        Given query string, perform transform it to remove certain 
+        characters, remove double space with the intent of improving
+        API matching odds.
+        """
         char_transform = lambda c: c if c not in "_-&.,()[]" else " "
         f = compose((
             lambda s: "".join(list(map(char_transform, s))),
-            pascal_to_space, condense_space, str.lower))
+            condense_space, str.lower))
         return f(file)
+
+
+class FileSystemDomain:
+    """
+    Logic to handle File system related operations
+    """
+
+    def filename_from_path(self, path):
+        # type: (str|Path) -> str
+        """
+        From a filesystem path or a Path object, return the 
+        name of the file, without its suffix.
+        """
+        return Path(str(path)).stem
+
+    def get_bookman_path(self):
+        return Path(settings.DIR).expanduser().resolve()
