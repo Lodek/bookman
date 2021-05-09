@@ -30,17 +30,15 @@ def build_parser(controller_map):
     return parser
 
 def main():
+    controller_map = get_controllers()
+    parser = build_parser(controller_map)
+    args = parser.parse_args()
+
     api = api_factory(settings.API_KEY)
     service = GBooksService(api)
     domain = Domain(service)
     Controller.domain = domain
 
-    controller_map = get_controllers()
-
-    parser = build_parser(controller_map)
-    args = parser.parse_args()
-
-    # FIXME This is so verbose. Yucky!
     command_name = args.__dict__.pop("subcommand_name")
     controller = controller_map[command_name]
     controller.run(**args.__dict__)
