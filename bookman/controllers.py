@@ -108,7 +108,7 @@ class Open(Controller):
         books_map = {path.name: path for path in bookman_dir.iterdir()}
         chosen_one = prompt(books_map.keys())
         chosen_path = books_map[chosen_one]
-        subprocess.run(f"xdg-open {chosen_path}".split())
+        subprocess.run(f"nohup xdg-open '{chosen_path}' > /dev/null", shell=True)
 
 
 def get_controllers():
