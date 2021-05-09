@@ -23,15 +23,18 @@ class Book:
             lambda authors: authors if len(authors) <= 3 else [authors[0], "EtAl"],
             lambda authors: ",".join(authors)
         ])
-        authors = [author.replace(" ", "-") for author in self.authors]
+        authors = [author.replace(" ", "_") for author in self.authors]
         return formatter(authors)
 
     def _format_title(self):
-        return "-".join(self.title.split(' '))
+        return "_".join(self.title.split(' '))
+
+    def _isbn_getter(self):
+        return self.isbn if isbn else "_"
 
     def __str__(self):
         tags = "".join([f"[{tag}]" for tag in self.tags])
         authors = self._format_authors()
         title = self._format_title()
-        fmt = f"{tags}{authors}_{title}({self.year})_{self.isbn}"
+        fmt = f"{tags}{authors}-{title}({self.year})-{self.isbn}"
         return fmt
