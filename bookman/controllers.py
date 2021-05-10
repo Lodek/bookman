@@ -88,7 +88,7 @@ class Update(Controller):
 
 
     def run(self, filename, query=""):
-        query = self.file_system_domain.filename_from_path(file) if not query else query
+        query = self.file_system_domain.filename_from_path(filename) if not query else query
         books = self.api_domain.get_books_from_query(query)
         result = prompt(list(map(str, books)))
         # I feel like this method adds too much custom logic

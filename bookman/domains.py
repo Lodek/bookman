@@ -147,7 +147,7 @@ class ApiDomain:
         f = compose((
             lambda s: "".join(list(map(char_transform, s))),
             condense_space, str.lower))
-        return f(file)
+        return f(query)
 
 
 class FileSystemDomain:
