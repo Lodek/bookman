@@ -4,6 +4,7 @@ Google Books API Service module
 from bookman import settings
 
 from googleapiclient.discovery import build
+import requests
 
 
 # FIXME Api factory shouldn't be here
@@ -18,11 +19,9 @@ class GBooksService:
     utility functions to be used directly with bookman's model objects.
     """
 
+    VOLUMES_URL = "https://www.googleapis.com/books/v1/volumes?q={}"
     ALLOWED_KEYWORDS = {'intitle', 'inauthor', 'inpublisher',
                         'subject', 'isbn', 'lccn', 'oclc'}
-
-    def __init__(self, api):
-        self.api = api
 
     def query(self, query, **kwargs):
         """
@@ -36,8 +35,10 @@ class GBooksService:
         keywords_query = self._keyword_query_builder(**kwargs)
         query = query.replace(' ', '+')
         query = query + keywords_query
-        request = self.api.list(q=query)
-        return request.execute()
+        response = requests.get(self.VOLUMES_URL.format(query))
+        if response.status_code != 200:
+            raise RuntimeError("API Fetch failed")
+        return response.json()
 
     def _keyword_query_builder(self, **kwargs):
         """Builder method that receives kwargs and return a query string as

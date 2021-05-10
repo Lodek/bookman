@@ -2,7 +2,7 @@ import logging
 import sys
 import argparse
 
-from .services import GBooksService, api_factory
+from .services import GBooksService
 from .domains import ApiDomain, FileSystemDomain, Parser
 from .controllers import get_controllers, Controller
 from bookman import settings
@@ -34,8 +34,7 @@ def main():
     arg_parser = build_parser(controller_map)
     args = arg_parser.parse_args()
 
-    api = api_factory(settings.API_KEY)
-    service = GBooksService(api)
+    service = GBooksService()
     api_domain = ApiDomain(service)
     filesystem_domain = FileSystemDomain()
     parser = Parser()
