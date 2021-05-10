@@ -107,10 +107,10 @@ class Open(Controller):
 
     def run(self):
         bookman_dir = Path(settings.DIR).expanduser().resolve()
-        books_map = {path.name: path for path in bookman_dir.iterdir()}
-        chosen_one = prompt(books_map.keys())
-        chosen_path = books_map[chosen_one]
-        subprocess.run(f"nohup xdg-open '{chosen_path}' > /dev/null", shell=True)
+        result = subprocess.run(f"cd {bookman_dir} && find . | cut -c3- | fzf", shell=True, stdout=subprocess.PIPE, stderr=sys.stderr)
+        relative_path = result.stdout.decode("utf-8").strip("\n")
+        full_path = bookman_dir / relative_path
+        subprocess.run(f"nohup xdg-open '{full_path}' > /dev/null", shell=True)
 
 
 def get_controllers():
