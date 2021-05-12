@@ -92,7 +92,7 @@ class Update(Controller):
         books = self.api_domain.get_books_from_query(query)
         result = prompt(list(map(str, books)))
         # I feel like this method adds too much custom logic
-        file = Path(filename)
+        file = Path(filename).resolve()
         bookman_dir = self.file_system_domain.get_bookman_path()
         target = bookman_dir / (result + file.suffix)
         file.rename(target)

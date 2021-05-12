@@ -1,0 +1,3 @@
+- Add version command
+- Write tests
+- write pipeline
