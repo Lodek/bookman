@@ -5,6 +5,12 @@ from pathlib import Path
 from .utils import pascal_to_kebab
 from bookman import settings
 
+def check_result(result, message=""):
+    """Checks a subprocess run result. If returncode is not 0
+    exists with a message"""
+    message = message or "No input chosen"
+    if result.returncode != 0:
+        sys.exit(message)
 
 def prompt(lines):
     # type: list(str) -> str
@@ -15,6 +21,7 @@ def prompt(lines):
     # the bookman's stderr means I can spawn fzf, interact with it and 
     # get its result.
     result = subprocess.run("fzf", input=fzf_input, stdout=subprocess.PIPE, stderr=sys.stderr)
+    check_result(result)
     return result.stdout.decode("utf-8").strip("\n")
 
 
@@ -108,6 +115,7 @@ class Open(Controller):
     def run(self):
         bookman_dir = Path(settings.DIR).expanduser().resolve()
         result = subprocess.run(f"cd {bookman_dir} && find . | cut -c3- | fzf", shell=True, stdout=subprocess.PIPE, stderr=sys.stderr)
+        check_result(result)
         relative_path = result.stdout.decode("utf-8").strip("\n")
         full_path = bookman_dir / relative_path
         subprocess.run(f"nohup xdg-open '{full_path}' > /dev/null", shell=True)

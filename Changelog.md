@@ -1,3 +1,7 @@
+# 0.2.2 - 2021-05-22
+## Bugfix
+- Bookman exits if no result was chosen from the fzf prompt
+
 # 0.2.1 - 2021-05-12
 ## Bugfix
 - Fixed rename bug with update command
