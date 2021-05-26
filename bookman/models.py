@@ -20,7 +20,6 @@ class Book:
     def _format_authors(self):
         formatter = compose([
             sorted,
-            lambda authors: authors if len(authors) <= 3 else [authors[0], "EtAl"],
             lambda authors: ",".join(authors)
         ])
         authors = [author.replace(" ", "_") for author in self.authors]

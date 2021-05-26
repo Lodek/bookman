@@ -1,3 +1,7 @@
+# 0.3.0 - 2021-05-26
+## Feat
+- Changed author formatting scheme to no longer truncate after 3 authors
+
 # 0.2.2 - 2021-05-22
 ## Bugfix
 - Bookman exits if no result was chosen from the fzf prompt
