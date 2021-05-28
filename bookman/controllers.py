@@ -1,6 +1,7 @@
 import subprocess, sys
 from abc import ABC, abstractmethod
 from pathlib import Path
+import shutil
 
 from .utils import pascal_to_kebab
 from bookman import settings
@@ -82,8 +83,9 @@ class Fetch(Controller):
 
 class Update(Controller):
     """
-    Rename a book file to follow bookman's name format.
-    Use filename as query, or a user specified query"
+    Moves a copy of a book file to Bookman's directory and renames it with
+    Bookman's format.
+    Uses filename as query, or a user specified query"
     """
 
     def add_args(self, parser):
@@ -93,8 +95,12 @@ class Update(Controller):
         parser.add_argument("--query", "-q", required=False, default="",
             help="User defined string to use as query")
 
+        parser.add_argument("--move", "-m", required=False, default=False,
+            action="store_true", help="Moves target file as opposed to making a copy of it")
 
-    def run(self, filename, query=""):
+
+    def run(self, filename, query="", move=False):
+        os_call = shutil.move if move else shutil.copy2
         query = self.file_system_domain.filename_from_path(filename) if not query else query
         books = self.api_domain.get_books_from_query(query)
         result = prompt(list(map(str, books)))
@@ -102,7 +108,7 @@ class Update(Controller):
         file = Path(filename).resolve()
         bookman_dir = self.file_system_domain.get_bookman_path()
         target = bookman_dir / (result + file.suffix)
-        file.rename(target)
+        os_call(file, target)
 
 
 class Open(Controller):

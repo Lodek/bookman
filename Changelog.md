@@ -1,3 +1,7 @@
+# 0.3.1 - 2021-05-28
+## Fix
+- Fixed issue where copying from a different partition would break
+
 # 0.3.0 - 2021-05-26
 ## Feat
 - Changed author formatting scheme to no longer truncate after 3 authors
