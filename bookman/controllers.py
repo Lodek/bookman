@@ -81,7 +81,7 @@ class Fetch(Controller):
         print(result)
 
 
-class Update(Controller):
+class Add(Controller):
     """
     Moves a copy of a book file to Bookman's directory and renames it with
     Bookman's format.

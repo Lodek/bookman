@@ -1,3 +1,7 @@
+# 0.4.0 - 2021-05-28
+## Change
+- Renamed update command to add
+
 # 0.3.1 - 2021-05-28
 ## Fix
 - Fixed issue where copying from a different partition would break
